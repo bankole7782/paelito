@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  </style>
+</head>
+<body>
+  <h1>View Books</h1>
+  {{range .Books}}
+    <a href="/view_book/{{.filename}}"> {{.title}} </a><br>
+  {{end}}
+</body>
+</html>

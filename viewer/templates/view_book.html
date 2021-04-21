@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0px;
+    }
+    #main {
+      width: calc(100% - 400px);
+      float: left;
+      margin: 0px;
+    }
+    #sidenav {
+      width: 350px;
+      background-color: #ddd;
+      margin: 0px;
+      height: 100%;
+      padding-left: 10px;
+      position: fixed;
+      right: 0;
+
+    }
+    .pimg {
+      max-width: 500px;
+    }
+    #page {
+      margin: 0 auto;
+      width: 600px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="main">
+      <div id="page">
+        <img src="/gba/{{.BookName}}/cover.png" class="pimg" />
+      </div>
+    </div>
+
+
+    <div id="sidenav">
+      <h3>Table of Contents</h3>
+      <ol>
+      {{range .TOC}}
+
+        <li>
+          <a href="/view_book_chapter/{{.html_filename}}">{{.name}}</a>
+        </li>
+      {{end}}
+      </ol>
+    </div>
+  </div>
+
+</body>
+</html>

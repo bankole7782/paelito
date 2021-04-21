@@ -18,6 +18,7 @@ import (
   "github.com/bankole7782/paelito/paelito_shared"
 )
 
+
 func main() {
   if len(os.Args) != 2 {
     panic("The program expects one arguments: folder name")
@@ -29,7 +30,7 @@ func main() {
   }
 
   inPath := filepath.Join(rootPath, "p", os.Args[1])
-  tmpFolder := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(5))
+  tmpFolder := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15))
   os.MkdirAll(tmpFolder, 0777)
   defer os.RemoveAll(tmpFolder)
 
@@ -73,7 +74,7 @@ func main() {
   os.WriteFile(filepath.Join(tmpFolder, "rtoc.json"), nTOCJson, 0777)
 
 
-  tmpFolder2 := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(5))
+  tmpFolder2 := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15))
   os.MkdirAll(tmpFolder2, 0777)
   defer os.RemoveAll(tmpFolder2)
 
