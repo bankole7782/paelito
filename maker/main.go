@@ -19,6 +19,14 @@ import (
 )
 
 
+func DoesPathExists(p string) bool {
+	if _, err := os.Stat(p); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+
 func main() {
   if len(os.Args) != 2 {
     panic("The program expects one arguments: folder name")
@@ -35,6 +43,14 @@ func main() {
   defer os.RemoveAll(tmpFolder)
 
   copy.Copy(filepath.Join(inPath, "cover.png"), filepath.Join(tmpFolder, "cover.png"))
+  notNecessary := []string{"font1.ttf", "font2.ttf", "book.css"}
+  for _, toCopy := range notNecessary {
+    nnPath := filepath.Join(inPath, toCopy)
+    if DoesPathExists(nnPath) {
+      copy.Copy(nnPath, filepath.Join(tmpFolder, toCopy))
+    }
+  }
+
   rawTOC, err := os.ReadFile(filepath.Join(inPath, "rtoc.json"))
   if err != nil {
     panic(err)

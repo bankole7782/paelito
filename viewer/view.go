@@ -74,6 +74,7 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     BookName string
     TOC []map[string]string
   }
+  wv.SetTitle(bookName + " | Paelito: A book reader.")
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
   tmpl.Execute(w, Context{bookName, rawTOCObjs})
 
@@ -122,6 +123,18 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+  var PreviousChapter string
+  var NextChapter string
+  for i, obj := range rawTOCObjs {
+    if obj["html_filename"] == chapterFilename {
+      if i != 0 {
+        PreviousChapter = rawTOCObjs[i-1]["html_filename"]
+      }
+      if i + 1 != len(rawTOCObjs) {
+        NextChapter = rawTOCObjs[i+1]["html_filename"]
+      }
+    }
+  }
   rawChapterHTML, err := os.ReadFile(filepath.Join(obFolder, chapterFilename))
   if err != nil {
     errorPage(w, errors.Wrap(err, "os error"))
@@ -131,7 +144,9 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     BookName string
     TOC []map[string]string
     PageContents template.HTML
+    PreviousChapter string
+    NextChapter string
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book_chapter.html"))
-  tmpl.Execute(w, Context{bookName, rawTOCObjs, template.HTML(string(rawChapterHTML))})
+  tmpl.Execute(w, Context{bookName, rawTOCObjs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter})
 }

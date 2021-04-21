@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link href="/gba/{{.BookName}}/book.css" rel="stylesheet" />
   <style>
     body {
       margin: 0px;
@@ -23,9 +24,27 @@
     .pimg {
       max-width: 500px;
     }
-    #page {
+    #page, #links {
       margin: 0 auto;
-      width: 600px;
+      width: 700px;
+    }
+    #page {
+      text-align: justify;
+    }
+    #links {
+      border-top: 1px solid gray;
+      margin-bottom: 50px;
+      padding-top: 10px;
+    }
+    a.lnk {
+      font-size: 1.5em;
+      border: 1px solid gray;
+      border-radius: 2px;
+      padding: 5px;
+      text-decoration: none;
+    }
+    a.lnk:hover {
+      color: gray;
     }
   </style>
 </head>
@@ -35,7 +54,15 @@
       <div id="page">
         {{.PageContents}}
       </div>
-      <a class="next">Next Page</a>
+      <div id="links">
+        {{if .PreviousChapter}}
+          <a class="lnk" href="/view_book_chapter/{{.BookName}}/{{.PreviousChapter}}">Previous Chapter</a>
+        {{end}}
+        &nbsp;&nbsp;
+        {{if .NextChapter}}
+          <a class="lnk" href="/view_book_chapter/{{.BookName}}/{{.NextChapter}}">Next Chapter</a>
+        {{end}}
+      </div>
     </div>
 
 

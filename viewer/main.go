@@ -13,6 +13,7 @@ import (
   "github.com/bankole7782/paelito/paelito_shared"
 )
 
+var wv webview.WebView
 
 func main() {
 	debug := false
@@ -20,6 +21,7 @@ func main() {
 		debug = true
 	}
 	w := webview.New(debug)
+	wv = w
 	defer w.Destroy()
 	w.SetTitle("Paelito: A book reader.")
 	w.SetSize(1200, 800, webview.HintNone)
@@ -38,6 +40,8 @@ func main() {
 	  // r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.FS(contentStatics))))
 
 	  r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			wv.SetTitle("Paelito: A book reader.")
+
       dirFIs, err := os.ReadDir(filepath.Join(rootPath, "out"))
       if err != nil {
         errorPage(w, errors.Wrap(err, "os error"))
