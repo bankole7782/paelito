@@ -1,4 +1,4 @@
-package main
+package paelito_shared
 
 import (
   "os"
@@ -25,7 +25,7 @@ func GetRootPath() (string, error) {
 
 
 
-func untestedRandomString(length int) string {
+func UntestedRandomString(length int) string {
   var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
   const charset = "abcdefghijklmnopqrstuvwxyz1234567890"
 
