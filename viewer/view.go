@@ -73,11 +73,11 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
   type Context struct {
     BookName string
     TOC []map[string]string
+    FirstFilename string
   }
   wv.SetTitle(bookName + " | Paelito: A book reader.")
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
-  tmpl.Execute(w, Context{bookName, rawTOCObjs})
-
+  tmpl.Execute(w, Context{bookName, rawTOCObjs, rawTOCObjs[0]["html_filename"]})
 }
 
 
@@ -140,13 +140,18 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     errorPage(w, errors.Wrap(err, "os error"))
     return
   }
+  hasBG := false
+  if paelito_shared.DoesPathExists(filepath.Join(obFolder, "bg.png")) {
+    hasBG = true
+  }
   type Context struct {
     BookName string
     TOC []map[string]string
     PageContents template.HTML
     PreviousChapter string
     NextChapter string
+    HasBackground bool
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book_chapter.html"))
-  tmpl.Execute(w, Context{bookName, rawTOCObjs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter})
+  tmpl.Execute(w, Context{bookName, rawTOCObjs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG})
 }

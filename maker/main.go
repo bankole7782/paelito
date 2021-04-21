@@ -2,11 +2,10 @@ package main
 
 import (
   "github.com/gomarkdown/markdown"
-  // "github.com/gomarkdown/markdown/parser"
   "os"
-  "github.com/gomarkdown/markdown/ast"
-  "github.com/gomarkdown/markdown/html"
-  "io"
+  // "github.com/gomarkdown/markdown/ast"
+  // "github.com/gomarkdown/markdown/html"
+  // "io"
   "fmt"
   "path/filepath"
   "github.com/otiai10/copy"
@@ -17,14 +16,6 @@ import (
   "time"
   "github.com/bankole7782/paelito/paelito_shared"
 )
-
-
-func DoesPathExists(p string) bool {
-	if _, err := os.Stat(p); os.IsNotExist(err) {
-		return false
-	}
-	return true
-}
 
 
 func main() {
@@ -43,14 +34,29 @@ func main() {
   defer os.RemoveAll(tmpFolder)
 
   copy.Copy(filepath.Join(inPath, "cover.png"), filepath.Join(tmpFolder, "cover.png"))
-  notNecessary := []string{"font1.ttf", "font2.ttf", "book.css"}
+  notNecessary := []string{"font1.ttf", "font2.ttf", "book.css", "bg.png"}
   for _, toCopy := range notNecessary {
     nnPath := filepath.Join(inPath, toCopy)
-    if DoesPathExists(nnPath) {
+    if paelito_shared.DoesPathExists(nnPath) {
       copy.Copy(nnPath, filepath.Join(tmpFolder, toCopy))
     }
   }
 
+  // update book details.json
+  rawDetails, err := os.ReadFile(filepath.Join(inPath, "details.json"))
+  if err != nil {
+    panic(err)
+  }
+  detailsObj := make(map[string]string)
+  err = json.Unmarshal(rawDetails, &detailsObj)
+  if err != nil {
+    panic(err)
+  }
+  detailsObj["date"] = time.Now().Format("2006-01-02")
+  detailsJson, err := json.Marshal(detailsObj)
+  os.WriteFile(filepath.Join(tmpFolder, "details.json"), detailsJson, 0777)
+
+  // convert markdowns to html files.
   rawTOC, err := os.ReadFile(filepath.Join(inPath, "rtoc.json"))
   if err != nil {
     panic(err)
@@ -61,11 +67,6 @@ func main() {
   if err != nil {
     panic(err)
   }
-  opts := html.RendererOptions{
-      Flags: html.CommonFlags,
-      RenderNodeHook: renderHookDropCodeBlock,
-  }
-  renderer := html.NewRenderer(opts)
 
   for _, tocObj := range rawTOCObjs {
     rawChapter, err := os.ReadFile(filepath.Join(inPath, tocObj["filename"]))
@@ -73,7 +74,7 @@ func main() {
       panic(err)
     }
 
-    html := markdown.ToHTML([]byte(rawChapter), nil, renderer)
+    html := markdown.ToHTML(rawChapter, nil, nil)
     outFileName := strings.Replace(tocObj["filename"], ".md", ".html", 1)
     os.WriteFile(filepath.Join(tmpFolder, outFileName), html, 0777)
     nTOCObj := map[string]string {
@@ -125,15 +126,4 @@ func main() {
   }
 
   fmt.Println(outFilePath)
-}
-
-
-func renderHookDropCodeBlock(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
-    // skip all nodes that are not CodeBlock nodes
-	if _, ok := node.(*ast.CodeBlock); !ok {
-		return ast.GoToNext, false
-    }
-    // custom rendering logic for ast.CodeBlock. By doing nothing it won't be
-    // present in the output
-	return ast.GoToNext, true
 }

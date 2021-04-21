@@ -20,12 +20,29 @@
       right: 0;
 
     }
-    .pimg {
-      max-width: 800px;
+    .cover {
+      width: 700px;
     }
     #page {
       margin: 0 auto;
       width: 700px;
+    }
+    #start_book {
+      margin: 0 auto;
+      font-size: 1.7em;
+      text-decoration: none;
+      border: 1px solid gray;
+      padding: 5px;
+      width: fit-content;
+      display: block;
+    }
+    #start_book:hover {
+      color: gray;
+    }
+    #links {
+      border-top: 1px solid gray;
+      margin-bottom: 50px;
+      padding-top: 10px;
     }
   </style>
 </head>
@@ -33,9 +50,11 @@
   <div id="container">
     <div id="main">
       <div id="page">
-        <img src="/gba/{{.BookName}}/cover.png" class="pimg" />
+        <img src="/gba/{{.BookName}}/cover.png" class="pimg cover" />
       </div>
-
+      <div id="links">
+        <a id="start_book" href="/view_book_chapter/{{$.BookName}}/{{.FirstFilename}}">Start Book</a>
+      </div>
     </div>
 
 

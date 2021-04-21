@@ -19,7 +19,6 @@
       padding-left: 10px;
       position: fixed;
       right: 0;
-
     }
     .pimg {
       max-width: 500px;
@@ -28,6 +27,11 @@
       margin: 0 auto;
       width: 700px;
     }
+    {{if .HasBackground}}
+    #main {
+      background: url("/gba/{{.BookName}}/bg.png") repeat;
+    }
+    {{end}}
     #page {
       text-align: justify;
     }
