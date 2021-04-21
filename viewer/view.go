@@ -95,3 +95,43 @@ func getBookAsset(w http.ResponseWriter, r *http.Request) {
 
   http.ServeFile(w, r, filepath.Join(obFolder, assetName))
 }
+
+
+func viewBookChapter(w http.ResponseWriter, r *http.Request) {
+  vars := mux.Vars(r)
+  bookName := vars["book_name"]
+  chapterFilename := vars["ch_filename"]
+
+  rootPath, err := paelito_shared.GetRootPath()
+  if err != nil {
+    errorPage(w, err)
+    return
+  }
+
+  obFolder := filepath.Join(rootPath, ".ob", bookName, "out")
+
+  rawTOC, err := os.ReadFile(filepath.Join(obFolder, "rtoc.json"))
+  if err != nil {
+    errorPage(w, errors.Wrap(err, "os error"))
+    return
+  }
+  rawTOCObjs := make([]map[string]string, 0)
+  err = json.Unmarshal(rawTOC, &rawTOCObjs)
+  if err != nil {
+    errorPage(w, errors.Wrap(err, "json error"))
+    return
+  }
+
+  rawChapterHTML, err := os.ReadFile(filepath.Join(obFolder, chapterFilename))
+  if err != nil {
+    errorPage(w, errors.Wrap(err, "os error"))
+    return
+  }
+  type Context struct {
+    BookName string
+    TOC []map[string]string
+    PageContents template.HTML
+  }
+  tmpl := template.Must(template.ParseFS(content, "templates/view_book_chapter.html"))
+  tmpl.Execute(w, Context{bookName, rawTOCObjs, template.HTML(string(rawChapterHTML))})
+}

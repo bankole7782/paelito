@@ -62,7 +62,7 @@ func main() {
 
     r.HandleFunc("/view_book/{filename}", viewBook)
     r.HandleFunc("/gba/{filename}/{filename2}", getBookAsset)
-
+    r.HandleFunc("/view_book_chapter/{book_name}/{ch_filename}", viewBookChapter)
 
 	  http.ListenAndServe(fmt.Sprintf(":%s", port), r)
 
