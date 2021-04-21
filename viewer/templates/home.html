@@ -2,12 +2,21 @@
 <html>
 <head>
   <style>
+  .a_book img {
+    width: 300px;
+  }
+  .a_book {
+    margin-right: 20px;
+    margin-bottom: 20px;
+  }
   </style>
 </head>
 <body>
   <h1>View Books</h1>
   {{range .Books}}
-    <a href="/view_book/{{.filename}}"> {{.title}} </a><br>
+    <a class="a_book" href="/view_book/{{.filename}}">
+      <img src="/gba/{{.title}}/cover.png" alt="book cover" />
+    </a>
   {{end}}
 </body>
 </html>

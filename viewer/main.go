@@ -50,6 +50,11 @@ func main() {
       booksMap := make([]map[string]string, 0)
       for _, dirFI := range dirFIs {
         if strings.HasSuffix(dirFI.Name(), ".pae1") {
+					err = unpackBook(dirFI.Name())
+					if err != nil {
+						errorPage(w, err)
+						return
+					}
           bk := map[string]string {
             "filename" : dirFI.Name(),
             "title" : strings.ReplaceAll(dirFI.Name(), ".pae1", ""),

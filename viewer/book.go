@@ -14,8 +14,50 @@ import (
   "strings"
   "html/template"
   "encoding/json"
-
 )
+
+
+func unpackBook(filename string) error {
+  rootPath, err := paelito_shared.GetRootPath()
+  if err != nil {
+    return err
+  }
+
+  bookName := strings.ReplaceAll(filename, ".pae1", "")
+  obFolder := filepath.Join(rootPath, ".ob", bookName)
+  os.MkdirAll(obFolder, 0777)
+
+  inPath := filepath.Join(rootPath, "out", filename)
+  inputFile, err := os.Open(inPath)
+  if err != nil {
+    return errors.Wrap(err, "os error")
+  }
+  defer inputFile.Close()
+
+  zr, err := gzip.NewReader(inputFile)
+  if err != nil {
+    return errors.Wrap(err, "gzip error")
+  }
+
+  mofBytes, err := io.ReadAll(zr)
+  if err != nil {
+    return errors.Wrap(err, "io error")
+  }
+
+  err = os.WriteFile(filepath.Join(obFolder, "out.mof"), mofBytes, 0777)
+  if err != nil {
+    return errors.Wrap(err, "os error")
+  }
+
+  err = mof.UndoMOF(filepath.Join(obFolder, "out.mof"), obFolder)
+  if err != nil {
+    return errors.Wrap(err, "mof error")
+  }
+
+
+  return nil
+}
+
 
 func viewBook(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
@@ -27,48 +69,24 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+  err = unpackBook(filename)
+  if err != nil {
+    errorPage(w, err)
+    return
+  }
   bookName := strings.ReplaceAll(filename, ".pae1", "")
   obFolder := filepath.Join(rootPath, ".ob", bookName)
-  os.MkdirAll(obFolder, 0777)
-
-  inPath := filepath.Join(rootPath, "out", filename)
-  inputFile, err := os.Open(inPath)
+  bookPath := filepath.Join(obFolder, "out")
+  rawTOC, err := os.ReadFile(filepath.Join(bookPath, "rtoc.json"))
   if err != nil {
     errorPage(w, errors.Wrap(err, "os error"))
     return
   }
-  defer inputFile.Close()
-
-  zr, err := gzip.NewReader(inputFile)
-  if err != nil {
-    panic(err)
-  }
-
-  mofBytes, err := io.ReadAll(zr)
-  if err != nil {
-    panic(err)
-  }
-
-  err = os.WriteFile(filepath.Join(obFolder, "out.mof"), mofBytes, 0777)
-  if err != nil {
-    panic(err)
-  }
-
-  err = mof.UndoMOF(filepath.Join(obFolder, "out.mof"), obFolder)
-  if err != nil {
-    panic(err)
-  }
-
-  bookPath := filepath.Join(obFolder, "out")
-
-  rawTOC, err := os.ReadFile(filepath.Join(bookPath, "rtoc.json"))
-  if err != nil {
-    panic(err)
-  }
   rawTOCObjs := make([]map[string]string, 0)
   err = json.Unmarshal(rawTOC, &rawTOCObjs)
   if err != nil {
-    panic(err)
+    errorPage(w, errors.Wrap(err, "json error"))
+    return
   }
   type Context struct {
     BookName string
@@ -144,6 +162,10 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
   if paelito_shared.DoesPathExists(filepath.Join(obFolder, "bg.png")) {
     hasBG = true
   }
+  hasCSS := false
+  if paelito_shared.DoesPathExists(filepath.Join(obFolder, "book.css")) {
+    hasCSS = true
+  }
   type Context struct {
     BookName string
     TOC []map[string]string
@@ -151,7 +173,9 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     PreviousChapter string
     NextChapter string
     HasBackground bool
+    HasCSS bool
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book_chapter.html"))
-  tmpl.Execute(w, Context{bookName, rawTOCObjs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG})
+  tmpl.Execute(w, Context{bookName, rawTOCObjs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG,
+    hasCSS})
 }

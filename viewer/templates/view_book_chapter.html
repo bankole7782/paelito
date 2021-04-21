@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link href="/gba/{{.BookName}}/book.css" rel="stylesheet" />
+  {{if .HasCSS}}
+    <link href="/gba/{{.BookName}}/book.css" rel="stylesheet" />
+  {{end}}
   <style>
     body {
       margin: 0px;
