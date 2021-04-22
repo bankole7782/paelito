@@ -2,7 +2,7 @@
 <html>
 <head>
   {{if .HasCSS}}
-    <link href="/gba/{{.BookName}}/book.css" rel="stylesheet" />
+    <link href="/gba/{{.BookId}}/book.css" rel="stylesheet" />
   {{end}}
   <style>
     body {
@@ -51,7 +51,7 @@
     }
     {{if .HasBackground}}
     #main {
-      background: url("/gba/{{.BookName}}/bg.png") repeat;
+      background: url("/gba/{{.BookId}}/bg.png") repeat;
     }
     {{end}}
     #page {

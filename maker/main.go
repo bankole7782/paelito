@@ -50,7 +50,7 @@ func main() {
     }
   }
 
-  // update book details.json
+  // validate and update book details.json
   rawDetails, err := os.ReadFile(filepath.Join(inPath, "details.json"))
   if err != nil {
     panic("Your book must have a details.json")
@@ -60,6 +60,14 @@ func main() {
   if err != nil {
     panic(err)
   }
+  compulsoryKeys := []string{"FullTitle", "Comment", "Author1", "UpdateURL", "BookSourceURL", "BookId"}
+  for _, key := range compulsoryKeys {
+    _, ok := detailsObj[key]
+    if ! ok {
+      panic("Your details.json doesn't have the following field: " + key)
+    }
+  }
+  
   detailsObj["Version"] = time.Now().Format("20060102T150405MST")
   detailsObj["Date"] = time.Now().Format("2006-01-02")
   detailsJson, err := json.Marshal(detailsObj)

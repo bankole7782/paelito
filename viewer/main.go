@@ -94,6 +94,7 @@ func main() {
 						"date": detailsObj["Date"],
 						"source_url": detailsObj["BookSourceURL"],
 						"version": detailsObj["Version"],
+						"bookid": detailsObj["BookId"],
           }
           booksMap = append(booksMap, bk)
         }
@@ -107,7 +108,7 @@ func main() {
 	  })
 
     r.HandleFunc("/view_book/{filename}", viewBook)
-    r.HandleFunc("/gba/{filename}/{filename2}", getBookAsset)
+    r.HandleFunc("/gba/{bookid}/{asset}", getBookAsset)
     r.HandleFunc("/view_book_chapter/{book_name}/{ch_filename}", viewBookChapter)
 		r.HandleFunc("/gs/{obj}", func (w http.ResponseWriter, r *http.Request) {
 			vars := mux.Vars(r)

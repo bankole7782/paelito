@@ -54,7 +54,18 @@ func unpackBook(filename string) error {
     return errors.Wrap(err, "mof error")
   }
 
+  rawDetails, err := os.ReadFile(filepath.Join(obFolder, "out", "details.json"))
+  if err != nil {
+    return errors.Wrap(err, "os error")
+  }
+  detailsObj := make(map[string]string)
+  err = json.Unmarshal(rawDetails, &detailsObj)
+  if err != nil {
+    return errors.Wrap(err, "json error")
+  }
 
+  os.MkdirAll(filepath.Join(rootPath, ".maps"), 0777)
+  os.WriteFile(filepath.Join(rootPath, ".maps", detailsObj["BookId"]), []byte(bookName), 0777)
   return nil
 }
 
@@ -123,7 +134,8 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
   detailsObj := make(map[string]string)
   err = json.Unmarshal(rawDetails, &detailsObj)
   if err != nil {
-    errorPage(w, errors.Wrap(err, ""))
+    errorPage(w, errors.Wrap(err, "json error"))
+    return
   }
   authors := make([]string, 0)
   for k, v := range detailsObj {
@@ -146,7 +158,7 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
   }
 
   hnv := false
-  if newVersionStr != "" && newVersionStr != detailsObj["Version"] {
+  if newVersionStr != "" && newVersionStr != detailsObj["Version"] && newVersionStr > detailsObj["Version"] {
     hnv = true
   }
   type Context struct {
@@ -158,18 +170,19 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     HasNewVersion bool
     NewVersion string
     SourceURL string
+    BookId string
   }
   wv.SetTitle(bookName + " | Paelito: A book reader.")
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
   tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"], detailsObj, authors,
-    hnv, newVersionStr, detailsObj["BookSourceURL"]})
+    hnv, newVersionStr, detailsObj["BookSourceURL"], detailsObj["BookId"]})
 }
 
 
 func getBookAsset(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
-  filename := vars["filename"]
-  assetName := vars["filename2"]
+  bookId := vars["bookid"]
+  assetName := vars["asset"]
 
   rootPath, err := paelito_shared.GetRootPath()
   if err != nil {
@@ -177,7 +190,12 @@ func getBookAsset(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  obFolder := filepath.Join(rootPath, ".ob", strings.ReplaceAll(filename, ".pae1", ""), "out")
+  rawBookName, err := os.ReadFile(filepath.Join(rootPath, ".maps", bookId))
+  if err != nil {
+    errorPage(w, errors.Wrap(err, "os error"))
+    return
+  }
+  obFolder := filepath.Join(rootPath, ".ob", string(rawBookName), "out")
 
   http.ServeFile(w, r, filepath.Join(obFolder, assetName))
 }
@@ -251,6 +269,19 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
   if paelito_shared.DoesPathExists(filepath.Join(obFolder, "book.css")) {
     hasCSS = true
   }
+
+  rawDetails, err := os.ReadFile(filepath.Join(obFolder, "details.json"))
+  if err != nil {
+    errorPage(w, errors.Wrap(err, "os error"))
+    return
+  }
+  detailsObj := make(map[string]string)
+  err = json.Unmarshal(rawDetails, &detailsObj)
+  if err != nil {
+    errorPage(w, errors.Wrap(err, "json error"))
+    return
+  }
+
   type Context struct {
     BookName string
     TOC []TableOfContent
@@ -260,8 +291,9 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     HasBackground bool
     HasCSS bool
     CurrentChapter string
+    BookId string
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book_chapter.html"))
   tmpl.Execute(w, Context{bookName, tocs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG,
-    hasCSS, chapterFilename})
+    hasCSS, chapterFilename, detailsObj["BookId"]})
 }
