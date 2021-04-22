@@ -42,11 +42,19 @@ func main() {
   }
 
   copy.Copy(filepath.Join(inPath, "cover.png"), filepath.Join(tmpFolder, "cover.png"))
-  notNecessary := []string{"font1.ttf", "font2.ttf", "book.css", "bg.png"}
+  notNecessary := []string{"font1.ttf", "font2.ttf", "book.css"}
   for _, toCopy := range notNecessary {
     nnPath := filepath.Join(inPath, toCopy)
     if paelito_shared.DoesPathExists(nnPath) {
       copy.Copy(nnPath, filepath.Join(tmpFolder, toCopy))
+    }
+  }
+
+  // copy all the image files into the program.
+  allDirFIS, _ := os.ReadDir(inPath)
+  for _, dirFI := range allDirFIS {
+    if strings.HasSuffix(dirFI.Name(), ".png") || strings.HasSuffix(dirFI.Name(), ".jpg") {
+      copy.Copy(filepath.Join(inPath, dirFI.Name()), filepath.Join(tmpFolder, dirFI.Name()))
     }
   }
 
