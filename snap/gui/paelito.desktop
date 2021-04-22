@@ -1,0 +1,8 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=0.1.0
+Terminal=false
+Type=Application
+Name=Paelito
+Exec=paelito.viewer
+Icon=${SNAP}/meta/gui/logo.png
