@@ -64,8 +64,8 @@
       <div id="page">
         <img src="/gba/{{.BookName}}/cover.png" class="pimg cover" />
         <h2>Book Details</h2>
-        <span>Authors: {{range .Authors}} <b>{{.}}</b>&nbsp;&nbsp; {{end}}</span><br>
-        <span>Version: <b>{{.Details.Version}}</b>&nbsp;&nbsp; Date Created <b>{{.Details.Date}}</b></span><br>
+        <p>Authors: {{range .Authors}} <b>{{.}}</b>&nbsp;&nbsp; {{end}}</p>
+        <p>Version: <b>{{.Details.Version}}</b>&nbsp;&nbsp; Date Created <b>{{.Details.Date}}</b></p>
       </div>
       <div id="links">
         <a id="start_book" href="/view_book_chapter/{{$.BookName}}/{{.FirstFilename}}">Start Book</a>
