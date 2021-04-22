@@ -8,6 +8,8 @@ import (
   "os"
   "path/filepath"
   "github.com/pkg/errors"
+  "github.com/bankole7782/paelito/paelito_shared"
+  "io"
 )
 
 
@@ -33,5 +35,48 @@ func emptyDir(path string) error {
 	for _, objFI := range objFIs {
 		os.RemoveAll(filepath.Join(path, objFI.Name()))
 	}
+	return nil
+}
+
+
+func downloadFile(url, outPath string) error {
+	if paelito_shared.DoesPathExists(outPath) {
+		return nil
+	}
+
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return errors.Wrap(err, "http error")
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+  if err != nil {
+    return errors.Wrap(err, "io error")
+  }
+
+	if resp.StatusCode != 200 {
+		return errors.New(string(body))
+	}
+	// Create the file
+	parts := strings.Split(outPath, "/")
+	pathDir := strings.Join(parts[: len(parts) - 1], "/")
+	err = os.MkdirAll(pathDir, 0777)
+	if err != nil {
+		return errors.Wrap(err, "os error")
+	}
+
+	out, err := os.Create(outPath)
+	if err != nil {
+		return errors.Wrap(err, "os error")
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = out.Write(body)
+	if err != nil {
+		return errors.Wrap(err, "io error")
+	}
+
 	return nil
 }
