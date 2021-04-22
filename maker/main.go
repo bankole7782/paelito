@@ -32,7 +32,7 @@ func main() {
   inPath := filepath.Join(rootPath, "p", os.Args[1])
   tmpFolder := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15))
   os.MkdirAll(tmpFolder, 0777)
-  // defer os.RemoveAll(tmpFolder)
+  defer os.RemoveAll(tmpFolder)
 
   if ! paelito_shared.DoesPathExists(filepath.Join(inPath, "cover.png")) {
     panic("Your book must have a cover.png")
