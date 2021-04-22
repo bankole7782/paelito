@@ -8,6 +8,14 @@
     body {
       margin: 0px;
     }
+    @font-face {
+      src: url("/gs/Comfortaa-Regular.ttf");
+      font-family: Comfortaa;
+    }
+    body {
+      font-family: Comfortaa;
+      font-size: 1.2em;
+    }
     #main {
       width: calc(100% - 400px);
       float: left;
@@ -86,7 +94,8 @@
 
     <div id="sidenav">
       <h3>Table of Contents</h3>
-      <a href="/view_book/{{$.BookName}}.pae1">Cover Page</a>
+      <a href="/">Library</a><br>
+      <a href="/view_book/{{$.BookName}}.pae1">Cover Page</a><br>
       <ol>
         {{range .TOC}}
           <li>

@@ -11,6 +11,7 @@ import (
 	"html/template"
   "strings"
   "github.com/bankole7782/paelito/paelito_shared"
+	"encoding/json"
 )
 
 var wv webview.WebView
@@ -55,18 +56,44 @@ func main() {
 						errorPage(w, err)
 						return
 					}
+					bookName := strings.ReplaceAll(dirFI.Name(), ".pae1", "")
+
+					rawDetails, err := os.ReadFile(filepath.Join(rootPath, ".ob", bookName, "out", "details.json"))
+					if err != nil {
+						errorPage(w, errors.Wrap(err, "os error"))
+						return
+					}
+					detailsObj := make(map[string]string)
+					err = json.Unmarshal(rawDetails, &detailsObj)
+					if err != nil {
+						errorPage(w, errors.Wrap(err, ""))
+					}
+					authors := make([]string, 0)
+					for k, v := range detailsObj {
+						if strings.HasPrefix(k, "Author") {
+							authors = append(authors, v)
+						}
+					}
+
           bk := map[string]string {
             "filename" : dirFI.Name(),
-            "title" : strings.ReplaceAll(dirFI.Name(), ".pae1", ""),
+            "filename_no_ext": bookName,
+						"title": detailsObj["FullTitle"],
+						"comment": detailsObj["Comment"],
+						"authors": strings.Join(authors, ", "),
+						"date": detailsObj["Date"],
+						"source_url": detailsObj["BookSourceURL"],
+						"version": detailsObj["Version"],
           }
           booksMap = append(booksMap, bk)
         }
       }
       type Context struct {
         Books []map[string]string
+				LibPath string
       }
       tmpl := template.Must(template.ParseFS(content, "templates/home.html"))
-      tmpl.Execute(w, Context{booksMap})
+      tmpl.Execute(w, Context{booksMap, filepath.Join(rootPath, "out")})
 	  })
 
     r.HandleFunc("/view_book/{filename}", viewBook)
@@ -86,6 +113,10 @@ func main() {
 
 	  http.ListenAndServe(fmt.Sprintf(":%s", port), r)
 
+	}()
+
+	defer func() {
+		emptyDir(filepath.Join(rootPath, ".ob"))
 	}()
 
 	w.Navigate(fmt.Sprintf("http://127.0.0.1:%s", port))

@@ -3,20 +3,70 @@
 <head>
   <style>
   .a_book img {
-    width: 300px;
+    width: 200px;
+    float: left;
+    margin-right: 20px;
   }
   .a_book {
     margin-right: 20px;
     margin-bottom: 20px;
+    display: block;
+    padding: 20px;
+    border: 2px solid gray;
+    border-radius: 3px;
+  }
+  .h {
+    width: fit-content;
+    margin: 0 auto;
+  }
+  @font-face {
+    src: url("/gs/Comfortaa-Regular.ttf");
+    font-family: Comfortaa;
+  }
+  body {
+    background-color: #C9B1B1;
+    font-family: Comfortaa;
+    font-size: 1.2em;
+    background: url("/gs/sprite.png") repeat;
+  }
+  div.a_book_meta {
+    width: 500px;
+    float: left;
+    margin: auto 5px;
+  }
+  div.clear {
+    clear: left;
+  }
+  .a_book_meta a {
+    color: #541D1D;
+    border: 3px solid #541D1D;
+    padding: 10px;
+    text-decoration: none;
+    margin-top: 20px;
+    display: block;
+    width: fit-content;
   }
   </style>
 </head>
 <body>
-  <h1>View Books</h1>
+  <h1 class="h">Library</h1>
+  <p class="h">All books must be placed in <b>{{.LibPath}}</b> to be visible by this program.</p>
+  <br><br>
   {{range .Books}}
-    <a class="a_book" href="/view_book/{{.filename}}">
-      <img src="/gba/{{.title}}/cover.png" alt="book cover" />
-    </a>
+    <div class="a_book">
+      <img src="/gba/{{.filename_no_ext}}/cover.png" alt="book cover" />
+      <div class="a_book_meta">
+        Title: <b>{{.title}}</b><br>
+        Comment: <b>{{.comment}}</b><br>
+        Authors: <b> {{.authors}}</b><br>
+        Date Released: <b>{{.date}}</b><br>
+        Version: <b>{{.version}}</b><br>
+        Book Source: <b>{{.source_url}}</b><br>
+        <a href="/view_book/{{.filename}}">Start Reading</a>
+
+      </div>
+      <div class="clear"></div>
+    </div>
   {{end}}
 </body>
 </html>

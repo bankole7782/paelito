@@ -30,6 +30,9 @@ func main() {
   }
 
   inPath := filepath.Join(rootPath, "p", os.Args[1])
+  if ! paelito_shared.DoesPathExists(inPath) {
+    panic(fmt.Sprintf("The book dir '%s' is not in '%s'", os.Args[1], rootPath))
+  }
   tmpFolder := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15))
   os.MkdirAll(tmpFolder, 0777)
   defer os.RemoveAll(tmpFolder)
