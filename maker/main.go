@@ -155,4 +155,5 @@ func main() {
   }
 
   fmt.Println(outFilePath)
+  fmt.Println("Version: " + detailsObj["Version"] + " for server upload.")
 }

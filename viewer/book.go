@@ -10,7 +10,7 @@ import (
   "compress/gzip"
   "github.com/pkg/errors"
   "io"
-  // "fmt"
+  "fmt"
   "strings"
   "html/template"
   "encoding/json"
@@ -27,7 +27,7 @@ func unpackBook(filename string) error {
   obFolder := filepath.Join(rootPath, ".ob", bookName)
   os.MkdirAll(obFolder, 0777)
 
-  inPath := filepath.Join(rootPath, "out", filename)
+  inPath := filepath.Join(rootPath, "lib", filename)
   inputFile, err := os.Open(inPath)
   if err != nil {
     return errors.Wrap(err, "os error")
@@ -131,16 +131,38 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
       authors = append(authors, v)
     }
   }
+
+  newVersionStr := ""
+  resp, err := http.Get( detailsObj["UpdateURL"])
+  if err != nil {
+    fmt.Println(err)
+  }
+  if err == nil {
+    defer resp.Body.Close()
+    body, err := io.ReadAll(resp.Body)
+    if err == nil && resp.StatusCode == 200 {
+      newVersionStr = string(body)
+    }
+  }
+
+  hnv := false
+  if newVersionStr != "" && newVersionStr != detailsObj["Version"] {
+    hnv = true
+  }
   type Context struct {
     BookName string
     TOC []TableOfContent
     FirstFilename string
     Details map[string]string
     Authors []string
+    HasNewVersion bool
+    NewVersion string
+    SourceURL string
   }
   wv.SetTitle(bookName + " | Paelito: A book reader.")
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
-  tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"], detailsObj, authors})
+  tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"], detailsObj, authors,
+    hnv, newVersionStr, detailsObj["BookSourceURL"]})
 }
 
 

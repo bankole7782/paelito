@@ -25,4 +25,4 @@ You can now run `paelito.viewer`
 
 ## Sample Book
 
-Download sample from [pandolee](https://pandolee/static/the_botanum.pae1).
+Download sample from [pandolee](https://pandolee.com/static/the_botanum.pae1).

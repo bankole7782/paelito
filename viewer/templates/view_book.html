@@ -64,12 +64,21 @@
       margin-bottom: 50px;
       padding-top: 10px;
     }
+    #loud_shout {
+      font-size: 2em;
+    }
   </style>
 </head>
 <body>
   <div id="container">
     <div id="main">
       <div id="page">
+        {{if .HasNewVersion}}
+          <div id="loud_shout">
+            <h1>This book has a new version</h1>
+            <p>Visit the source at <b>{{.SourceURL}}</b> to get the latest version</p>
+          </div>
+        {{end}}
         <img src="/gba/{{.BookName}}/cover.png" class="pimg cover" />
         <h2>Book Details</h2>
         <p>Authors: {{range .Authors}} <b>{{.}}</b>&nbsp;&nbsp; {{end}}</p>

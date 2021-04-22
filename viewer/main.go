@@ -21,7 +21,8 @@ func init() {
     panic(err)
   }
 
-	os.MkdirAll(filepath.Join(rootPath, "out"), 0777)	
+	os.MkdirAll(filepath.Join(rootPath, "lib"), 0777)
+	os.MkdirAll(filepath.Join(rootPath, "p"), 0777)
 }
 
 
@@ -52,7 +53,7 @@ func main() {
 	  r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 			wv.SetTitle("Paelito: A book reader.")
 
-      dirFIs, err := os.ReadDir(filepath.Join(rootPath, "out"))
+      dirFIs, err := os.ReadDir(filepath.Join(rootPath, "lib"))
       if err != nil {
         errorPage(w, errors.Wrap(err, "os error"))
         return
@@ -102,7 +103,7 @@ func main() {
 				LibPath string
       }
       tmpl := template.Must(template.ParseFS(content, "templates/home.html"))
-      tmpl.Execute(w, Context{booksMap, filepath.Join(rootPath, "out")})
+      tmpl.Execute(w, Context{booksMap, filepath.Join(rootPath, "lib")})
 	  })
 
     r.HandleFunc("/view_book/{filename}", viewBook)
