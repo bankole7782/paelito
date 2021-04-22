@@ -15,6 +15,15 @@ import (
 )
 
 var wv webview.WebView
+func init() {
+	rootPath, err := paelito_shared.GetRootPath()
+  if err != nil {
+    panic(err)
+  }
+
+	os.MkdirAll(filepath.Join(rootPath, "out"), 0777)	
+}
+
 
 func main() {
 	debug := false
