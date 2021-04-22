@@ -130,6 +130,10 @@ func main() {
 		emptyDir(filepath.Join(rootPath, ".ob"))
 	}()
 
+	defer func() {
+		emptyDir(filepath.Join(rootPath, ".maps"))
+	}()
+
 	w.Navigate(fmt.Sprintf("http://127.0.0.1:%s", port))
 	w.Run()
 
