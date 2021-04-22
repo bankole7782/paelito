@@ -90,9 +90,9 @@ func main() {
   newTOCObjs := make([]map[string]string, 0)
   err = json.Unmarshal(rawTOC, &rawTOCObjs)
   if err != nil {
+    fmt.Println("Error in your rtoc.json")
     panic(err)
   }
-
 
   for _, tocObj := range rawTOCObjs {
     rawChapter, err := os.ReadFile(filepath.Join(inPath, tocObj["filename"]))
