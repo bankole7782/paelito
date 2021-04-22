@@ -67,8 +67,8 @@ func main() {
       panic("Your details.json doesn't have the following field: " + key)
     }
   }
-  
-  detailsObj["Version"] = time.Now().Format("20060102T150405MST")
+
+  detailsObj["Version"] = time.Now().Format(paelito_shared.VersionFormat)
   detailsObj["Date"] = time.Now().Format("2006-01-02")
   detailsJson, err := json.Marshal(detailsObj)
   os.WriteFile(filepath.Join(tmpFolder, "details.json"), detailsJson, 0777)

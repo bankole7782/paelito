@@ -14,6 +14,7 @@ import (
   "strings"
   "html/template"
   "encoding/json"
+  "time"
 )
 
 
@@ -158,8 +159,13 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
   }
 
   hnv := false
-  if newVersionStr != "" && newVersionStr != detailsObj["Version"] && newVersionStr > detailsObj["Version"] {
-    hnv = true
+  if newVersionStr != "" && newVersionStr != detailsObj["Version"] {
+    time1, err1 := time.Parse(paelito_shared.VersionFormat, newVersionStr)
+    time2, err2 := time.Parse(paelito_shared.VersionFormat, detailsObj["Version"])
+
+    if err1 == nil && err2 == nil && time2.Before(time1) {
+      hnv = true
+    }
   }
   type Context struct {
     BookName string

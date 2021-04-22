@@ -9,6 +9,8 @@ import (
   "time"
 )
 
+const VersionFormat = "20060102T150405MST"
+
 func GetRootPath() (string, error) {
 	hd, err := os.UserHomeDir()
 	if err != nil {
