@@ -9,16 +9,24 @@
       width: calc(100% - 400px);
       float: left;
       margin: 0px;
+      margin-top: 10px;
     }
     #sidenav {
       width: 350px;
-      background-color: #ddd;
+      background-color: #C9B1B1;
       margin: 0px;
       height: 100%;
       padding-left: 10px;
       position: fixed;
       right: 0;
-
+      border-left: 3px solid #764242;
+    }
+    #sidenav a {
+      text-decoration: none;
+      margin-bottom: 10px;
+    }
+    #sidenav a:hover {
+      color: gray;
     }
     .cover {
       width: 700px;
@@ -51,6 +59,7 @@
     <div id="main">
       <div id="page">
         <img src="/gba/{{.BookName}}/cover.png" class="pimg cover" />
+
       </div>
       <div id="links">
         <a id="start_book" href="/view_book_chapter/{{$.BookName}}/{{.FirstFilename}}">Start Book</a>
@@ -63,7 +72,7 @@
       <ol>
         {{range .TOC}}
           <li>
-            <a href="/view_book_chapter/{{$.BookName}}/{{.html_filename}}">{{.name}}</a>
+            <a href="/view_book_chapter/{{$.BookName}}/{{.FileName}}">{{.Title}}</a>
           </li>
         {{end}}
       </ol>

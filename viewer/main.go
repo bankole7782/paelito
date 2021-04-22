@@ -72,6 +72,17 @@ func main() {
     r.HandleFunc("/view_book/{filename}", viewBook)
     r.HandleFunc("/gba/{filename}/{filename2}", getBookAsset)
     r.HandleFunc("/view_book_chapter/{book_name}/{ch_filename}", viewBookChapter)
+		r.HandleFunc("/gs/{obj}", func (w http.ResponseWriter, r *http.Request) {
+			vars := mux.Vars(r)
+			rawObj, err := contentStatics.ReadFile("statics/" + vars["obj"])
+			if err != nil {
+				panic(err)
+			}
+			w.Header().Set("Content-Disposition", "attachment; filename=" + vars["obj"])
+			contentType := http.DetectContentType(rawObj)
+			w.Header().Set("Content-Type", contentType)
+			w.Write(rawObj)
+		})
 
 	  http.ListenAndServe(fmt.Sprintf(":%s", port), r)
 

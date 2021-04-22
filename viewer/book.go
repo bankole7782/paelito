@@ -59,6 +59,13 @@ func unpackBook(filename string) error {
 }
 
 
+type TableOfContent struct {
+  Title string
+  FileName string
+  SubTOC []map[string]string
+}
+
+
 func viewBook(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
   filename := vars["filename"]
@@ -76,7 +83,9 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
   }
   bookName := strings.ReplaceAll(filename, ".pae1", "")
   obFolder := filepath.Join(rootPath, ".ob", bookName)
+
   bookPath := filepath.Join(obFolder, "out")
+
   rawTOC, err := os.ReadFile(filepath.Join(bookPath, "rtoc.json"))
   if err != nil {
     errorPage(w, errors.Wrap(err, "os error"))
@@ -88,14 +97,42 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     errorPage(w, errors.Wrap(err, "json error"))
     return
   }
+
+  tocs := make([]TableOfContent, 0)
+  for _, rawTOCObj := range rawTOCObjs {
+    subTOCPath := filepath.Join(bookPath, strings.ReplaceAll(rawTOCObj["html_filename"], ".html", "") + "_toc.json")
+    subTOCRaw, err := os.ReadFile(subTOCPath)
+    if err != nil {
+      errorPage(w, errors.Wrap(err, "os error"))
+      return
+    }
+    obj := make([]map[string]string, 0)
+    err = json.Unmarshal(subTOCRaw, &obj)
+    if err != nil {
+      errorPage(w, errors.Wrap(err, "json error"))
+      return
+    }
+    tocs = append(tocs, TableOfContent{rawTOCObj["name"], rawTOCObj["html_filename"], obj})
+  }
+
+  // rawDetails, err := os.ReadFile(filepath.Join(bookPath, "details.json"))
+  // if err != nil {
+  //   errorPage(w, errors.Wrap(err, "os error"))
+  //   return
+  // }
+  // detailsObj := make(map[string]string)
+  // err = json.Unmarshal(rawDetails, &detailsObj)
+  // if err != nil {
+  //   errorPage(w, errors.Wrap(err, ""))
+  // }
   type Context struct {
     BookName string
-    TOC []map[string]string
+    TOC []TableOfContent
     FirstFilename string
   }
   wv.SetTitle(bookName + " | Paelito: A book reader.")
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
-  tmpl.Execute(w, Context{bookName, rawTOCObjs, rawTOCObjs[0]["html_filename"]})
+  tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"]})
 }
 
 
@@ -141,6 +178,24 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+  tocs := make([]TableOfContent, 0)
+  for _, rawTOCObj := range rawTOCObjs {
+    subTOCPath := filepath.Join(obFolder, strings.ReplaceAll(rawTOCObj["html_filename"], ".html", "") + "_toc.json")
+    subTOCRaw, err := os.ReadFile(subTOCPath)
+    if err != nil {
+      errorPage(w, errors.Wrap(err, "os error"))
+      return
+    }
+    obj := make([]map[string]string, 0)
+    err = json.Unmarshal(subTOCRaw, &obj)
+    if err != nil {
+      errorPage(w, errors.Wrap(err, "json error"))
+      return
+    }
+    tocs = append(tocs, TableOfContent{rawTOCObj["name"], rawTOCObj["html_filename"], obj})
+  }
+
+
   var PreviousChapter string
   var NextChapter string
   for i, obj := range rawTOCObjs {
@@ -168,14 +223,15 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
   }
   type Context struct {
     BookName string
-    TOC []map[string]string
+    TOC []TableOfContent
     PageContents template.HTML
     PreviousChapter string
     NextChapter string
     HasBackground bool
     HasCSS bool
+    CurrentChapter string
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book_chapter.html"))
-  tmpl.Execute(w, Context{bookName, rawTOCObjs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG,
-    hasCSS})
+  tmpl.Execute(w, Context{bookName, tocs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG,
+    hasCSS, chapterFilename})
 }

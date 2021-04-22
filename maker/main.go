@@ -3,8 +3,6 @@ package main
 import (
   "github.com/gomarkdown/markdown"
   "os"
-  // "github.com/gomarkdown/markdown/ast"
-  // "github.com/gomarkdown/markdown/html"
   // "io"
   "fmt"
   "path/filepath"
@@ -15,6 +13,9 @@ import (
   "compress/gzip"
   "time"
   "github.com/bankole7782/paelito/paelito_shared"
+  "bytes"
+  "github.com/PuerkitoBio/goquery"
+  "strconv"
 )
 
 
@@ -31,7 +32,11 @@ func main() {
   inPath := filepath.Join(rootPath, "p", os.Args[1])
   tmpFolder := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15))
   os.MkdirAll(tmpFolder, 0777)
-  defer os.RemoveAll(tmpFolder)
+  // defer os.RemoveAll(tmpFolder)
+
+  if ! paelito_shared.DoesPathExists(filepath.Join(inPath, "cover.png")) {
+    panic("Your book must have a cover.png")
+  }
 
   copy.Copy(filepath.Join(inPath, "cover.png"), filepath.Join(tmpFolder, "cover.png"))
   notNecessary := []string{"font1.ttf", "font2.ttf", "book.css", "bg.png"}
@@ -45,21 +50,22 @@ func main() {
   // update book details.json
   rawDetails, err := os.ReadFile(filepath.Join(inPath, "details.json"))
   if err != nil {
-    panic(err)
+    panic("Your book must have a details.json")
   }
   detailsObj := make(map[string]string)
   err = json.Unmarshal(rawDetails, &detailsObj)
   if err != nil {
     panic(err)
   }
-  detailsObj["date"] = time.Now().Format("2006-01-02")
+  detailsObj["Version"] = time.Now().Format("20060102T150405MST")
+  detailsObj["Date"] = time.Now().Format("2006-01-02")
   detailsJson, err := json.Marshal(detailsObj)
   os.WriteFile(filepath.Join(tmpFolder, "details.json"), detailsJson, 0777)
 
   // convert markdowns to html files.
   rawTOC, err := os.ReadFile(filepath.Join(inPath, "rtoc.json"))
   if err != nil {
-    panic(err)
+    panic("You book must have rtoc.json, this is the root table of content file.")
   }
   rawTOCObjs := make([]map[string]string, 0)
   newTOCObjs := make([]map[string]string, 0)
@@ -67,6 +73,7 @@ func main() {
   if err != nil {
     panic(err)
   }
+
 
   for _, tocObj := range rawTOCObjs {
     rawChapter, err := os.ReadFile(filepath.Join(inPath, tocObj["filename"]))
@@ -77,6 +84,25 @@ func main() {
     html := markdown.ToHTML(rawChapter, nil, nil)
     outFileName := strings.Replace(tocObj["filename"], ".md", ".html", 1)
     os.WriteFile(filepath.Join(tmpFolder, outFileName), html, 0777)
+
+    // get the sub table of contents.
+    doc, err := goquery.NewDocumentFromReader(bytes.NewReader(html))
+    if err != nil {
+      panic(err)
+    }
+
+    subTOC := make([]map[string]string, 0)
+    doc.Find("h2").Each(func (i int, s *goquery.Selection) {
+      aTOC := map[string]string {
+        "index": strconv.Itoa(i + 1),
+        "title": s.Text(),
+      }
+      subTOC = append(subTOC, aTOC)
+    })
+    subTOCJson, _ := json.Marshal(subTOC)
+    subTOCFileName := strings.ReplaceAll(tocObj["filename"], ".md", "_toc.json")
+    os.WriteFile(filepath.Join(tmpFolder, subTOCFileName), subTOCJson, 0777)
+
     nTOCObj := map[string]string {
       "name": tocObj["name"],
       "html_filename": outFileName,

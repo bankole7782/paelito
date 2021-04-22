@@ -17,6 +17,6 @@ func errorPage(w http.ResponseWriter, err error) {
 	msg = strings.ReplaceAll(msg, "\n", "<br>")
 	msg = strings.ReplaceAll(msg, " ", "&nbsp;")
 	msg = strings.ReplaceAll(msg, "\t", "&nbsp;&nbsp;")
-	tmpl := template.Must(template.ParseFS(content, "templates/base.html", "templates/error.html"))
+	tmpl := template.Must(template.ParseFS(content, "templates/error.html"))
 	tmpl.Execute(w, Context{template.HTML(msg)})
 }
