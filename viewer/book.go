@@ -115,24 +115,32 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     tocs = append(tocs, TableOfContent{rawTOCObj["name"], rawTOCObj["html_filename"], obj})
   }
 
-  // rawDetails, err := os.ReadFile(filepath.Join(bookPath, "details.json"))
-  // if err != nil {
-  //   errorPage(w, errors.Wrap(err, "os error"))
-  //   return
-  // }
-  // detailsObj := make(map[string]string)
-  // err = json.Unmarshal(rawDetails, &detailsObj)
-  // if err != nil {
-  //   errorPage(w, errors.Wrap(err, ""))
-  // }
+  rawDetails, err := os.ReadFile(filepath.Join(bookPath, "details.json"))
+  if err != nil {
+    errorPage(w, errors.Wrap(err, "os error"))
+    return
+  }
+  detailsObj := make(map[string]string)
+  err = json.Unmarshal(rawDetails, &detailsObj)
+  if err != nil {
+    errorPage(w, errors.Wrap(err, ""))
+  }
+  authors := make([]string, 0)
+  for k, v := range detailsObj {
+    if strings.HasPrefix(k, "Author") {
+      authors = append(authors, v)
+    }
+  }
   type Context struct {
     BookName string
     TOC []TableOfContent
     FirstFilename string
+    Details map[string]string
+    Authors []string
   }
   wv.SetTitle(bookName + " | Paelito: A book reader.")
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
-  tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"]})
+  tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"], detailsObj, authors})
 }
 
 

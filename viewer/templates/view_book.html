@@ -23,10 +23,14 @@
     }
     #sidenav a {
       text-decoration: none;
+      color: #360C0C;
       margin-bottom: 10px;
     }
     #sidenav a:hover {
       color: gray;
+    }
+    #sidenav a:visited {
+      color: #360C0C;
     }
     .cover {
       width: 700px;
@@ -59,7 +63,9 @@
     <div id="main">
       <div id="page">
         <img src="/gba/{{.BookName}}/cover.png" class="pimg cover" />
-
+        <h2>Book Details</h2>
+        <span>Authors: {{range .Authors}} <b>{{.}}</b>&nbsp;&nbsp; {{end}}</span><br>
+        <span>Version: <b>{{.Details.Version}}</b>&nbsp;&nbsp; Date Created <b>{{.Details.Date}}</b></span><br>
       </div>
       <div id="links">
         <a id="start_book" href="/view_book_chapter/{{$.BookName}}/{{.FirstFilename}}">Start Book</a>
