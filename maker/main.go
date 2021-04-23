@@ -82,26 +82,22 @@ func main() {
   os.WriteFile(filepath.Join(tmpFolder, "details.json"), detailsJson, 0777)
 
   // convert markdowns to html files.
-  rawTOC, err := os.ReadFile(filepath.Join(inPath, "rtoc.json"))
+  rawTOC, err := os.ReadFile(filepath.Join(inPath, "toc.txt"))
   if err != nil {
-    panic("You book must have rtoc.json, this is the root table of content file.")
-  }
-  rawTOCObjs := make([]map[string]string, 0)
-  newTOCObjs := make([]map[string]string, 0)
-  err = json.Unmarshal(rawTOC, &rawTOCObjs)
-  if err != nil {
-    fmt.Println("Error in your rtoc.json")
-    panic(err)
+    panic("You book must have toc.txt, this is the root table of content file.")
   }
 
-  for _, tocObj := range rawTOCObjs {
-    rawChapter, err := os.ReadFile(filepath.Join(inPath, tocObj["filename"]))
+  newTOCObjs := make([]map[string]string, 0)
+  for _, part := range strings.Split(string(rawTOC), "\n\n") {
+    parts := strings.Split(strings.TrimSpace(part), "\n")
+
+    rawChapter, err := os.ReadFile(filepath.Join(inPath, parts[1]))
     if err != nil {
       panic(err)
     }
 
     html := markdown.ToHTML(rawChapter, nil, nil)
-    outFileName := strings.Replace(tocObj["filename"], ".md", ".html", 1)
+    outFileName := strings.Replace(parts[1], ".md", ".html", 1)
     os.WriteFile(filepath.Join(tmpFolder, outFileName), html, 0777)
 
     // get the sub table of contents.
@@ -119,11 +115,11 @@ func main() {
       subTOC = append(subTOC, aTOC)
     })
     subTOCJson, _ := json.Marshal(subTOC)
-    subTOCFileName := strings.ReplaceAll(tocObj["filename"], ".md", "_toc.json")
+    subTOCFileName := strings.ReplaceAll(parts[1], ".md", "_toc.json")
     os.WriteFile(filepath.Join(tmpFolder, subTOCFileName), subTOCJson, 0777)
 
     nTOCObj := map[string]string {
-      "name": tocObj["name"],
+      "name": parts[0],
       "html_filename": outFileName,
     }
     newTOCObjs = append(newTOCObjs, nTOCObj)
