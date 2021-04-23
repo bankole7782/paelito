@@ -18,11 +18,6 @@ Create your project in `$HOME/snap/paelito/common/p` and make it follows the law
 Then run `paelito.maker book_folder_name` to create your book.
 
 ### Viewing a book
-Paelito books must be downloaded and placed in the `$HOME/snap/paelito/common/out`.
+Paelito books must be downloaded and placed in the `$HOME/snap/paelito/common/lib`.
 
 You can now run `paelito.viewer`
-
-
-## Sample Book
-
-Download sample from [pandolee](https://pandolee.com/static/the_botanum.pae1).
