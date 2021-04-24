@@ -12,6 +12,7 @@ import (
   "strings"
   "github.com/bankole7782/paelito/paelito_shared"
 	"encoding/json"
+	"os/exec"
 )
 
 var wv webview.WebView
@@ -136,6 +137,10 @@ func main() {
 			contentType := http.DetectContentType(rawObj)
 			w.Header().Set("Content-Type", contentType)
 			w.Write(rawObj)
+		})
+
+		r.HandleFunc("/xdg/", func (w http.ResponseWriter, r *http.Request) {
+			exec.Command("xdg-open", r.FormValue("p")).Run()
 		})
 
 	  http.ListenAndServe(fmt.Sprintf(":%s", port), r)

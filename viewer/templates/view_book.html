@@ -76,7 +76,7 @@
         {{if .HasNewVersion}}
           <div id="loud_shout">
             <h1>This book has a new version</h1>
-            <p>Visit the source at <b>{{.SourceURL}}</b> to get the latest version</p>
+            <p>Visit the source at <a href="{{.SourceURL}}">{{.SourceURL}}</a> to get the latest version</p>
           </div>
         {{end}}
         <img src="/gba/{{.BookId}}/cover.png" class="pimg cover" />
@@ -102,6 +102,17 @@
       </ol>
     </div>
   </div>
+
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $("#page a").click(function(e) {
+      e.preventDefault()
+
+      $.get("/xdg/?p=" + $(e.target).attr("href"))
+    })
+  })
+  </script>
 
 </body>
 </html>
