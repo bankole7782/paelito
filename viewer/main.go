@@ -25,21 +25,21 @@ func init() {
 
 	os.MkdirAll(filepath.Join(rootPath, "lib"), 0777)
 	os.MkdirAll(filepath.Join(rootPath, "p"), 0777)
-	//
-	// includedBooks := []map[string]string {
-	// 	{
-	// 		"book_url": "http://pandolee.com/static/the_botanum.pae1",
-	// 		"book_file_name": "the_botanum.pae1",
-	// 	},
-	// 	{
-	// 		"book_url": "http://pandolee.com/static/the_baileia.pae1",
-	// 		"book_file_name": "the_baileia.pae1",
-	// 	},
-	// }
-	//
-	// for _, m := range includedBooks {
-	// 	downloadFile(m["book_url"], filepath.Join(rootPath, "lib", m["book_file_name"]))
-	// }
+
+	includedBooks := []map[string]string {
+		{
+			"book_url": "http://pandolee.com/static/the_botanum.pae1",
+			"book_file_name": "the_botanum.pae1",
+		},
+		{
+			"book_url": "http://pandolee.com/static/the_baileia.pae1",
+			"book_file_name": "the_baileia.pae1",
+		},
+	}
+
+	for _, m := range includedBooks {
+		downloadFile(m["book_url"], filepath.Join(rootPath, "lib", m["book_file_name"]))
+	}
 }
 
 
