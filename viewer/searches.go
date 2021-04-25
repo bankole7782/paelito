@@ -10,6 +10,7 @@ import (
   "encoding/json"
   "html/template"
   // "fmt"
+  "strings"
   "strconv"
 )
 
@@ -42,10 +43,11 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
     type Context struct {
       BookName string
       BookTitle string
+      BookId string
     }
 
     tmpl := template.Must(template.ParseFS(content, "templates/search_book.html"))
-    tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"]})
+    tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"], detailsObj["BookId"]})
 
   } else {
 
@@ -81,8 +83,9 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
       BookId string
       HasBackground bool
       HasCSS bool
+      Found bool
     }
-    wordPositions, ok := mapOfWordPositions[r.FormValue("word_searched_for")]
+    wordPositions, ok := mapOfWordPositions[strings.ToLower(r.FormValue("word_searched_for"))]
 
     rawChapterHTML := make([]byte, 0)
     var wordPosition paelito_shared.WordPosition
@@ -98,7 +101,7 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
 
     tmpl := template.Must(template.ParseFS(content, "templates/search_results.html"))
     tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"], r.FormValue("word_searched_for"), wordPositions,
-      wordPosition, template.HTML(string(rawChapterHTML)), detailsObj["BookId"], hasBG, hasCSS})
+      wordPosition, template.HTML(string(rawChapterHTML)), detailsObj["BookId"], hasBG, hasCSS, ok})
 
   }
 }
@@ -160,8 +163,9 @@ func viewASearchResult(w http.ResponseWriter, r *http.Request) {
     BookId string
     HasBackground bool
     HasCSS bool
+    Found bool
   }
-  wordPositions, ok := mapOfWordPositions[vars["word"]]
+  wordPositions, ok := mapOfWordPositions[strings.ToLower(vars["word"])]
 
   rawChapterHTML := make([]byte, 0)
   var wordPosition paelito_shared.WordPosition
@@ -182,6 +186,6 @@ func viewASearchResult(w http.ResponseWriter, r *http.Request) {
 
   tmpl := template.Must(template.ParseFS(content, "templates/search_results.html"))
   tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"], vars["word"], wordPositions,
-    wordPosition, template.HTML(string(rawChapterHTML)), detailsObj["BookId"], hasBG, hasCSS})
+    wordPosition, template.HTML(string(rawChapterHTML)), detailsObj["BookId"], hasBG, hasCSS, ok  })
 
 }
