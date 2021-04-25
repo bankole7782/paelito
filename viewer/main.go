@@ -144,6 +144,7 @@ func main() {
 		})
 
 		r.HandleFunc("/search_book/{book_name}", searchBook)
+		r.HandleFunc("/view_a_search_result/{book_name}/{word}/{search_index}", viewASearchResult)
 
 	  http.ListenAndServe(fmt.Sprintf(":%s", port), r)
 
