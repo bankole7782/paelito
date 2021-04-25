@@ -45,3 +45,10 @@ func DoesPathExists(p string) bool {
 	}
 	return true
 }
+
+
+type WordPosition struct {
+  Word string
+  ParagraphIndex int
+  HtmlFilename string
+}

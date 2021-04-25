@@ -35,7 +35,7 @@ func main() {
   }
   tmpFolder := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15))
   os.MkdirAll(tmpFolder, 0777)
-  defer os.RemoveAll(tmpFolder)
+  // defer os.RemoveAll(tmpFolder)
 
   if ! paelito_shared.DoesPathExists(filepath.Join(inPath, "cover.png")) {
     panic("Your book must have a cover.png")
@@ -81,11 +81,20 @@ func main() {
   detailsJson, err := json.Marshal(detailsObj)
   os.WriteFile(filepath.Join(tmpFolder, "details.json"), detailsJson, 0777)
 
+  // load stop words
+  stopWordsList := make([]string, 0)
+  err = json.Unmarshal(englishStopwords, &stopWordsList)
+  if err != nil {
+    panic(err)
+  }
+
   // convert markdowns to html files.
   rawTOC, err := os.ReadFile(filepath.Join(inPath, "toc.txt"))
   if err != nil {
     panic("You book must have toc.txt, this is the root table of content file.")
   }
+
+  mapOfWordPositions := make(map[string][]paelito_shared.WordPosition)
 
   newTOCObjs := make([]map[string]string, 0)
   for _, part := range strings.Split(string(rawTOC), "\n\n") {
@@ -100,7 +109,7 @@ func main() {
     outFileName := strings.Replace(parts[1], ".md", ".html", 1)
     os.WriteFile(filepath.Join(tmpFolder, outFileName), html, 0777)
 
-    // get the sub table of contents.
+    // make the sub table of contents.
     doc, err := goquery.NewDocumentFromReader(bytes.NewReader(html))
     if err != nil {
       panic(err)
@@ -118,6 +127,37 @@ func main() {
     subTOCFileName := strings.ReplaceAll(parts[1], ".md", "_toc.json")
     os.WriteFile(filepath.Join(tmpFolder, subTOCFileName), subTOCJson, 0777)
 
+    // make an index for search sakes.
+    doc.Find("p").Each(func (i int, s *goquery.Selection) {
+      words := strings.Fields(s.Text())
+
+      for _, word := range words {
+        wordLower := strings.ToLower(word)
+
+        if FindIn(stopWordsList, wordLower) != -1 {
+          continue
+        }
+
+        wordPositions, ok := mapOfWordPositions[wordLower]
+        if ! ok {
+          mapOfWordPositions[wordLower] = []paelito_shared.WordPosition{
+            {
+              ParagraphIndex: i,
+              HtmlFilename: outFileName,
+              Word: wordLower,
+            },
+          }
+        } else {
+          wordPositions = append(wordPositions, paelito_shared.WordPosition{
+            ParagraphIndex: i,
+            HtmlFilename: outFileName,
+            Word: wordLower,
+          })
+          mapOfWordPositions[wordLower] = wordPositions
+        }
+      }
+    })
+
     nTOCObj := map[string]string {
       "name": parts[0],
       "html_filename": outFileName,
@@ -131,6 +171,11 @@ func main() {
   }
   os.WriteFile(filepath.Join(tmpFolder, "rtoc.json"), nTOCJson, 0777)
 
+  mapOfWordPositionsJson, err := json.Marshal(mapOfWordPositions)
+  if err != nil {
+    panic(err)
+  }
+  os.WriteFile(filepath.Join(tmpFolder, "index.json"), mapOfWordPositionsJson, 0777)
 
   tmpFolder2 := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15))
   os.MkdirAll(tmpFolder2, 0777)
@@ -168,4 +213,14 @@ func main() {
 
   fmt.Println(outFilePath)
   fmt.Println("Version: " + detailsObj["Version"] + " for server upload.")
+}
+
+
+func FindIn(container []string, elem string) int {
+	for i, o := range container {
+		if o == elem {
+			return i
+		}
+	}
+	return -1
 }
