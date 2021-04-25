@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+  {{if .HasCSS}}
+    <link href="/gba/{{.BookId}}/book.css" rel="stylesheet" />
+  {{end}}
   <style>
     body {
       margin: 0px;
@@ -17,7 +20,6 @@
       width: calc(100% - 350px);
       float: left;
       margin: 0px;
-      margin-top: 10px;
     }
     #sidenav {
       width: 350px;
@@ -40,67 +42,70 @@
     #sidenav a:visited {
       color: #360C0C;
     }
-    .cover {
+    .pimg {
+      max-width: 500px;
+    }
+    #page, #links {
+      margin: 0 auto;
       width: 700px;
     }
+    {{if .HasBackground}}
+    #main {
+      background: url("/gba/{{.BookId}}/bg.png") repeat;
+    }
+    {{end}}
     #page {
-      margin: 0 auto;
-      width: 700px;
-    }
-    #start_book {
-      margin: 0 auto;
-      font-size: 1.7em;
-      text-decoration: none;
-      border: 1px solid gray;
-      padding: 5px;
-      width: fit-content;
-      display: block;
-    }
-    #start_book:hover {
-      color: gray;
+      text-align: justify;
     }
     #links {
       border-top: 1px solid gray;
       margin-bottom: 50px;
       padding-top: 10px;
     }
-    #loud_shout {
-      font-size: 2em;
+    a.lnk {
+      font-size: 1.5em;
+      border: 1px solid gray;
+      border-radius: 2px;
+      padding: 5px;
+      text-decoration: none;
+    }
+    a.lnk:hover {
+      color: gray;
     }
   </style>
 </head>
 <body>
   <div id="container">
     <div id="main">
+      <form method="post">
+        <div>
+          <label>Enter Word</label>
+          <input type="text" name="word_searched_for" value="{{.WordSearchedFor}}" />
+        </div>
+        <div>
+          <input type="submit" value="Search for Word" />
+        </div>
+      </form>
+
       <div id="page">
-        {{if .HasNewVersion}}
-          <div id="loud_shout">
-            <h1>This book has a new version</h1>
-            <p>Visit the source at <a href="{{.SourceURL}}">{{.SourceURL}}</a> to get the latest version</p>
-          </div>
-        {{end}}
-        <img src="/gba/{{.BookId}}/cover.png" class="pimg cover" />
-        <h2>Book Details</h2>
-        <p>Authors: {{range .Authors}} <b>{{.}}</b>&nbsp;&nbsp; {{end}}</p>
-        <p>Version: <b>{{.Details.Version}}</b>&nbsp;&nbsp; Date Created <b>{{.Details.Date}}</b></p>
+
+        {{.PageContents}}
       </div>
-      <div id="links">
-        <a id="start_book" href="/view_book_chapter/{{$.BookName}}/{{.FirstFilename}}">Start Book</a>
-      </div>
+
     </div>
 
 
     <div id="sidenav">
       <a href="/">Library</a><br>
-      <a href="/search_book/{{$.BookName}}">Search Book </a><br>
-      
-      <h3>Table of Contents</h3>
-
+      <a href="/view_book/{{$.BookName}}.pae1">Cover Page</a><br>
+      <h3>Search Results</h3>
       <ol>
-        {{range .TOC}}
+        {{range .WordPositions}}
           <li>
-            <a href="/view_book_chapter/{{$.BookName}}/{{.FileName}}">{{.Title}}</a>
+            <a class="a_search_result" href="#" data-parai="{{.ParagraphIndex}}" data-htmlfilename="{{.HtmlFilename}}">Check here</a>
           </li>
+        {{else}}
+          <h4> No results found</h4>
         {{end}}
       </ol>
     </div>
@@ -109,6 +114,16 @@
   <script src="/gs/jquery-3.6.0.min.js"></script>
   <script>
   $(document).ready(function() {
+    var paragraphIndexStr = "{{.WordPosition.ParagraphIndex}}";
+    if (paragraphIndexStr != "") {
+      var paragraphIndex = parseInt(paragraphIndexStr)
+      var el = $("p").get(paragraphIndex);
+      $(el).css("border-bottom", "1px solid black");
+      $("html, body").animate({
+        scrollTop: $(el).offset().top
+      }, 500)
+    }
+
     $("#page a").click(function(e) {
       e.preventDefault()
 

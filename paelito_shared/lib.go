@@ -11,6 +11,13 @@ import (
 
 const VersionFormat = "20060102T150405MST"
 
+type WordPosition struct {
+  Word string
+  ParagraphIndex int
+  HtmlFilename string
+}
+
+
 func GetRootPath() (string, error) {
 	hd, err := os.UserHomeDir()
 	if err != nil {
@@ -24,7 +31,6 @@ func GetRootPath() (string, error) {
 
 	return dd, nil
 }
-
 
 
 func UntestedRandomString(length int) string {
@@ -44,11 +50,4 @@ func DoesPathExists(p string) bool {
 		return false
 	}
 	return true
-}
-
-
-type WordPosition struct {
-  Word string
-  ParagraphIndex int
-  HtmlFilename string
 }

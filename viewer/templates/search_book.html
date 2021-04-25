@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0px;
+    }
+    @font-face {
+      src: url("/gs/Comfortaa-Regular.ttf");
+      font-family: Comfortaa;
+    }
+    body {
+      font-family: Comfortaa;
+      font-size: 1.2em;
+      background: url("/gs/sprite.png") repeat;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="main">
+      <h2>Type the word to search for in {{.BookTitle}}</h2>
+      <form method="post">
+        <div>
+          <label>Enter Word</label>
+          <input type="text" name="word_searched_for" />
+        </div>
+        <div>
+          <input type="submit" value="Search for Word" />
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

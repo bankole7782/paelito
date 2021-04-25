@@ -80,7 +80,7 @@ type TableOfContent struct {
 
 func viewBook(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
-  filename := vars["filename"]
+  filename := vars["book_name"]
 
   rootPath, err := paelito_shared.GetRootPath()
   if err != nil {

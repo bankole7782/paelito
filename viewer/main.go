@@ -25,21 +25,21 @@ func init() {
 
 	os.MkdirAll(filepath.Join(rootPath, "lib"), 0777)
 	os.MkdirAll(filepath.Join(rootPath, "p"), 0777)
-
-	includedBooks := []map[string]string {
-		{
-			"book_url": "http://pandolee.com/static/the_botanum.pae1",
-			"book_file_name": "the_botanum.pae1",
-		},
-		{
-			"book_url": "http://pandolee.com/static/the_baileia.pae1",
-			"book_file_name": "the_baileia.pae1",
-		},
-	}
-
-	for _, m := range includedBooks {
-		downloadFile(m["book_url"], filepath.Join(rootPath, "lib", m["book_file_name"]))
-	}
+	//
+	// includedBooks := []map[string]string {
+	// 	{
+	// 		"book_url": "http://pandolee.com/static/the_botanum.pae1",
+	// 		"book_file_name": "the_botanum.pae1",
+	// 	},
+	// 	{
+	// 		"book_url": "http://pandolee.com/static/the_baileia.pae1",
+	// 		"book_file_name": "the_baileia.pae1",
+	// 	},
+	// }
+	//
+	// for _, m := range includedBooks {
+	// 	downloadFile(m["book_url"], filepath.Join(rootPath, "lib", m["book_file_name"]))
+	// }
 }
 
 
@@ -124,7 +124,7 @@ func main() {
       tmpl.Execute(w, Context{booksMap, filepath.Join(rootPath, "lib")})
 	  })
 
-    r.HandleFunc("/view_book/{filename}", viewBook)
+    r.HandleFunc("/view_book/{book_name}", viewBook)
     r.HandleFunc("/gba/{bookid}/{asset}", getBookAsset)
     r.HandleFunc("/view_book_chapter/{book_name}/{ch_filename}", viewBookChapter)
 		r.HandleFunc("/gs/{obj}", func (w http.ResponseWriter, r *http.Request) {
@@ -142,6 +142,8 @@ func main() {
 		r.HandleFunc("/xdg/", func (w http.ResponseWriter, r *http.Request) {
 			exec.Command("xdg-open", r.FormValue("p")).Run()
 		})
+
+		r.HandleFunc("/search_book/{book_name}", searchBook)
 
 	  http.ListenAndServe(fmt.Sprintf(":%s", port), r)
 
