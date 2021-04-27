@@ -15,6 +15,7 @@ import (
   "html/template"
   "encoding/json"
   "time"
+  "strconv"
 )
 
 
@@ -217,7 +218,6 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     errorPage(w, err)
     return
   }
-
   obFolder := filepath.Join(rootPath, ".ob", bookName, "out")
 
   rawTOC, err := os.ReadFile(filepath.Join(obFolder, "rtoc.json"))
@@ -230,6 +230,18 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
   if err != nil {
     errorPage(w, errors.Wrap(err, "json error"))
     return
+  }
+
+  var paraNum int
+  var chapNum int
+  if len(r.FormValue("chapter_num")) != 0 {
+    chapterNum, err := strconv.Atoi(r.FormValue("chapter_num"))
+    pNum, err2 := strconv.Atoi(r.FormValue("para_num"))
+    if err == nil && err2 == nil && chapterNum <= len(rawTOCObjs){
+      chapterFilename = rawTOCObjs[chapterNum - 1]["html_filename"]
+      paraNum = pNum
+      chapNum = chapterNum
+    }
   }
 
   tocs := make([]TableOfContent, 0)
@@ -298,8 +310,11 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     HasCSS bool
     CurrentChapter string
     BookId string
+    ParaNum int
+    IsAGotoPage bool
+    ChapterNum int
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book_chapter.html"))
   tmpl.Execute(w, Context{bookName, tocs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG,
-    hasCSS, chapterFilename, detailsObj["BookId"]})
+    hasCSS, chapterFilename, detailsObj["BookId"], paraNum, paraNum > 0, chapNum})
 }

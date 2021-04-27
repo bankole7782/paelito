@@ -73,6 +73,20 @@
     a.lnk:hover {
       color: gray;
     }
+    .small_margin {
+      margin-top: 0px;
+    }
+    .p_num {
+      color: #360C0C;
+    }
+    input {
+      border: 1px solid #360C0C;
+      border-radius: 3px;
+      background-color: transparent;
+    }
+    .small_i {
+      width: 60px;
+    }
   </style>
 </head>
 <body>
@@ -97,6 +111,18 @@
       <br>
       <a href="/">Library</a><br>
       <a href="/search_book/{{$.BookName}}">Search Book </a><br>
+      <a href="#" id="view_para_numbers" data-done="false">Show Page Numbers</a><br>
+      <h3>Go to Paragraph</h3>
+      <form method="get">
+        {{if .IsAGotoPage}}
+          <label>Chapter</label><input class="small_i" type="number" name="chapter_num" value="{{.ChapterNum}}" />
+          <label>Paragraph</label><input class="small_i" type="number" name="para_num" value="{{.ParaNum}}" />
+        {{else}}
+          <label>Chapter</label><input class="small_i" type="number" name="chapter_num" value="1" />
+          <label>Paragraph</label><input class="small_i" type="number" name="para_num" value="1" />
+        {{end}}
+        <input type="submit" value="Go to" />
+      </form>
       <h3>Table of Contents</h3>
       <a href="/view_book/{{$.BookName}}.pae1">Cover Page</a><br>
       <ol>
@@ -121,6 +147,20 @@
   <script src="/gs/jquery-3.6.0.min.js"></script>
   <script>
   $(document).ready(function() {
+    var paragraphIndexStr = "{{.ParaNum}}";
+    var isAGotoPage = "{{.IsAGotoPage}}"
+    if (isAGotoPage == "true") {
+      var paragraphIndex = parseInt(paragraphIndexStr)
+      if (paragraphIndex -1 < $("p").length) {
+        var el = $("p").get(paragraphIndex - 1);
+        $(el).css("border-bottom", "1px solid black");
+        $("html, body").animate({
+          scrollTop: $(el).offset().top
+        }, 500)
+      }
+    }
+
+
     $("a.a_sub_toc").click(function(e) {
       var index = parseInt($(e.target).data("index"))
       var el = $("h2").get(index-1)
@@ -134,6 +174,23 @@
 
       $.get("/xdg/?p=" + $(e.target).attr("href"))
     })
+
+    $("#view_para_numbers").click(function(e) {
+      if ( $(e.target).data("done") == "true" ) {
+        $("#page p").removeClass("small_margin");
+        $(e.target).data("done", "false");
+        $(".p_num").remove();
+        $(e.target).text("Show paragraph numbers")
+      } else {
+        $("#page p").each(function(i, el) {
+          $(el).before("<span class='p_num'>" + (i+1).toString() + "</span>");
+        });
+        $("#page p").addClass("small_margin")
+        $(e.target).data("done", "true");
+        $(e.target).text("Hide paragraph numbers");
+      }
+    })
+
   })
   </script>
 
