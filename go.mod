@@ -10,4 +10,5 @@ require (
 	github.com/otiai10/copy v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/webview/webview v0.0.0-20210330151455-f540d88dde4e
+	github.com/zserge/lorca v0.1.9
 )

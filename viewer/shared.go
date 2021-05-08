@@ -58,13 +58,14 @@ func downloadFile(url, outPath string) error {
 	if resp.StatusCode != 200 {
 		return errors.New(string(body))
 	}
-	// Create the file
-	parts := strings.Split(outPath, "/")
-	pathDir := strings.Join(parts[: len(parts) - 1], "/")
-	err = os.MkdirAll(pathDir, 0777)
-	if err != nil {
-		return errors.Wrap(err, "os error")
-	}
+	// // Create the file
+	// parts := strings.Split(outPath, "/")
+	// pathDir := strings.Join(parts[: len(parts) - 1], "/")
+	// fmt.Println(pathDir)
+	// err = os.MkdirAll(pathDir, 0777)
+	// if err != nil {
+	// 	return errors.Wrap(err, "os error")
+	// }
 
 	out, err := os.Create(outPath)
 	if err != nil {

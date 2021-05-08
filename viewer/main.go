@@ -13,6 +13,9 @@ import (
   "github.com/bankole7782/paelito/paelito_shared"
 	"encoding/json"
 	"os/exec"
+	"runtime"
+	"github.com/zserge/lorca"
+	"os/signal"
 )
 
 var wv webview.WebView
@@ -38,28 +41,34 @@ func init() {
 	}
 
 	for _, m := range includedBooks {
-		downloadFile(m["book_url"], filepath.Join(rootPath, "lib", m["book_file_name"]))
+		err := downloadFile(m["book_url"], filepath.Join(rootPath, "lib", m["book_file_name"]))
+		if err != nil {
+			fmt.Printf("%+v\n", err)
+			panic(err)
+		}
 	}
 }
 
 
 func main() {
+	port := "45362"
 	debug := false
 	if os.Getenv("PANDOLEE_DEVELOPER") == "true" {
 		debug = true
 	}
-	w := webview.New(debug)
-	wv = w
-	defer w.Destroy()
-	w.SetTitle("Paelito: A book reader.")
-	w.SetSize(1200, 800, webview.HintNone)
-
-	port := "45362"
-
   rootPath, err := paelito_shared.GetRootPath()
   if err != nil {
     panic(err)
   }
+
+  defer func() {
+		emptyDir(filepath.Join(rootPath, ".ob"))
+	}()
+
+	defer func() {
+		emptyDir(filepath.Join(rootPath, ".maps"))
+	}()
+
 
 	go func() {
 
@@ -68,7 +77,9 @@ func main() {
 	  // r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.FS(contentStatics))))
 
 	  r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			wv.SetTitle("Paelito: A book reader.")
+	  	if runtime.GOOS == "linux" {
+				wv.SetTitle("Paelito: A book reader.")
+	  	}
 
       dirFIs, err := os.ReadDir(filepath.Join(rootPath, "lib"))
       if err != nil {
@@ -143,6 +154,10 @@ func main() {
 			exec.Command("xdg-open", r.FormValue("p")).Run()
 		})
 
+		r.HandleFunc("/favicon.ico", func (w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/gs/paelito.ico", 301)
+		})
+		
 		r.HandleFunc("/search_book/{book_name}", searchBook)
 		r.HandleFunc("/view_a_search_result/{book_name}/{word}/{search_index}", viewASearchResult)
 
@@ -150,15 +165,30 @@ func main() {
 
 	}()
 
-	defer func() {
-		emptyDir(filepath.Join(rootPath, ".ob"))
-	}()
+	if runtime.GOOS == "windows" {
+		args := []string{}
+		ui, err := lorca.New(fmt.Sprintf("http://127.0.0.1:%s", port), "", 1200, 800, args...)
+		if err != nil {
+			panic(err)
+		}
+		defer ui.Close()
 
-	defer func() {
-		emptyDir(filepath.Join(rootPath, ".maps"))
-	}()
+		// Wait until the interrupt signal arrives or browser window is closed
+		sigc := make(chan os.Signal)
+		signal.Notify(sigc, os.Interrupt)
+		select {
+		case <-sigc:
+		case <-ui.Done():
+		}
+	} else if runtime.GOOS == "linux" {
+		w := webview.New(debug)
+		wv = w
+		defer w.Destroy()
+		w.SetTitle("Paelito: A book reader.")
+		w.SetSize(1200, 800, webview.HintNone)
 
-	w.Navigate(fmt.Sprintf("http://127.0.0.1:%s", port))
-	w.Run()
+		w.Navigate(fmt.Sprintf("http://127.0.0.1:%s", port))
+		w.Run()
 
+	}
 }

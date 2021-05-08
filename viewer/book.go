@@ -16,6 +16,7 @@ import (
   "encoding/json"
   "time"
   "strconv"
+  "runtime"
 )
 
 
@@ -179,7 +180,9 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     SourceURL string
     BookId string
   }
-  wv.SetTitle(bookName + " | Paelito: A book reader.")
+  if runtime.GOOS == "linux" {
+    wv.SetTitle(bookName + " | Paelito: A book reader.")
+  }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
   tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"], detailsObj, authors,
     hnv, newVersionStr, detailsObj["BookSourceURL"], detailsObj["BookId"]})
