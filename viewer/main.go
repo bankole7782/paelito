@@ -151,13 +151,17 @@ func main() {
 		})
 
 		r.HandleFunc("/xdg/", func (w http.ResponseWriter, r *http.Request) {
-			exec.Command("xdg-open", r.FormValue("p")).Run()
+			if runtime.GOOS == "windows" {
+				exec.Command("xdg-open", r.FormValue("p")).Run()
+			} else {
+				exec.Command("start", r.FormValue("p")).Run()
+			}
 		})
 
 		r.HandleFunc("/favicon.ico", func (w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/gs/paelito.ico", 301)
 		})
-		
+
 		r.HandleFunc("/search_book/{book_name}", searchBook)
 		r.HandleFunc("/view_a_search_result/{book_name}/{word}/{search_index}", viewASearchResult)
 
