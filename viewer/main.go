@@ -152,9 +152,9 @@ func main() {
 
 		r.HandleFunc("/xdg/", func (w http.ResponseWriter, r *http.Request) {
 			if runtime.GOOS == "windows" {
-				exec.Command("xdg-open", r.FormValue("p")).Run()
-			} else {
 				exec.Command("start", r.FormValue("p")).Run()
+			} else if runtime.GOOS == "linux" {
+				exec.Command("xdg-open", r.FormValue("p")).Run()				
 			}
 		})
 
