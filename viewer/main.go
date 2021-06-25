@@ -170,7 +170,7 @@ func main() {
 	}()
 
 	if runtime.GOOS == "windows" {
-		args := []string{}
+		args := []string{"--force-device-scale-factor=1.0", "class=paelito"}
 		ui, err := lorca.New(fmt.Sprintf("http://127.0.0.1:%s", port), "", 1200, 800, args...)
 		if err != nil {
 			panic(err)
