@@ -59,4 +59,4 @@ To display the image, say for example dd.png. You must use the following path fo
 ### Viewing a book
 Paelito books must be downloaded and placed in the `$HOME/snap/paelito/common/lib`.
 
-You can now run `paelito.viewer`
+You can now run `paelito`

@@ -31,11 +31,11 @@ func init() {
 
 	includedBooks := []map[string]string {
 		{
-			"book_url": "http://pandolee.com/static/the_botanum.pae1",
+			"book_url": "http://saenuma.com/static/the_botanum.pae1",
 			"book_file_name": "the_botanum.pae1",
 		},
 		{
-			"book_url": "http://pandolee.com/static/the_baileia.pae1",
+			"book_url": "http://saenuma.com/static/the_baileia.pae1",
 			"book_file_name": "the_baileia.pae1",
 		},
 	}
@@ -154,7 +154,7 @@ func main() {
 			if runtime.GOOS == "windows" {
 				exec.Command("start", r.FormValue("p")).Run()
 			} else if runtime.GOOS == "linux" {
-				exec.Command("xdg-open", r.FormValue("p")).Run()				
+				exec.Command("xdg-open", r.FormValue("p")).Run()
 			}
 		})
 
