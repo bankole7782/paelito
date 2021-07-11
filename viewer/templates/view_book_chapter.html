@@ -2,20 +2,9 @@
 <html>
 <head>
   <title>{{$.BookName}} | Paelito: A book reader.</title>
-  {{if .HasCSS}}
-    <link href="/gba/{{.BookId}}/book.css" rel="stylesheet" />
-  {{end}}
   <style>
     body {
       margin: 0px;
-    }
-    @font-face {
-      src: url("/gs/Comfortaa-Regular.ttf");
-      font-family: Comfortaa;
-    }
-    body {
-      font-family: Comfortaa;
-      font-size: 1.2em;
     }
     #main {
       width: calc(100% - 350px);
@@ -60,7 +49,7 @@
     }
     {{if .HasBackground}}
     #main {
-      background: url("/gba/{{.BookId}}/bg.png") repeat;
+      background: url("/gba/{{$.BookName}}/bg.png") repeat;
     }
     {{end}}
     #page {

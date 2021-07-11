@@ -19,11 +19,11 @@ Then run `paelito.maker book_folder_name` to create your book.
 
 ### Book Details
 
-All the contents of a book folder should not contain any subdirectory.
+All the contents of a book folder must not contain any subdirectory.
 
 A book must contain a details.json, toc.txt, cover.png, some markdown files.
 
-Though not necessary a book could have font1.ttf, font2.ttf, book.css and a bg.png
+Though not necessary a book could have a bg.png
 
 #### details.json
 A paelito book starts with the `details.json`.
@@ -53,7 +53,7 @@ A toc item is the name of a chapter followed by a new line and then the markdown
 #### On Images
 To include an image into your book, please include the image into the book folder.
 
-To display the image, say for example dd.png. You must use the following path for the image `/gba/{BookId}/dd.png` where BookId is the random string in `details.json`.
+To display the image, say for example dd.png write it such ```![dd](dd.png)```.
 
 
 ### Viewing a book

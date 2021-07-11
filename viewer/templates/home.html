@@ -22,14 +22,9 @@
     width: fit-content;
     margin: 0 auto;
   }
-  @font-face {
-    src: url("/gs/Comfortaa-Regular.ttf");
-    font-family: Comfortaa;
-  }
   body {
     background-color: #C9B1B1;
-    font-family: Comfortaa;
-    font-size: 1.2em;
+    /* font-size: 1.2em; */
     background: url("/gs/sprite.png") repeat;
   }
   div.a_book_meta {
@@ -57,7 +52,7 @@
   <br><br>
   {{range .Books}}
     <div class="a_book">
-      <img src="/gba/{{.bookid}}/cover.png" alt="book cover" />
+      <img src="/gba/{{.filename}}/cover.png" alt="book cover" />
       <div class="a_book_meta">
         Title: <b>{{.title}}</b><br>
         Comment: <b>{{.comment}}</b><br>

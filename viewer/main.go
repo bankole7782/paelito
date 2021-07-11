@@ -65,11 +65,6 @@ func main() {
 		emptyDir(filepath.Join(rootPath, ".ob"))
 	}()
 
-	defer func() {
-		emptyDir(filepath.Join(rootPath, ".maps"))
-	}()
-
-
 	go func() {
 
 	  r := mux.NewRouter()
@@ -136,7 +131,7 @@ func main() {
 	  })
 
     r.HandleFunc("/view_book/{book_name}", viewBook)
-    r.HandleFunc("/gba/{bookid}/{asset}", getBookAsset)
+    r.HandleFunc("/gba/{book_name}/{asset}", getBookAsset)
     r.HandleFunc("/view_book_chapter/{book_name}/{ch_filename}", viewBookChapter)
 		r.HandleFunc("/gs/{obj}", func (w http.ResponseWriter, r *http.Request) {
 			vars := mux.Vars(r)

@@ -67,8 +67,6 @@ func unpackBook(filename string) error {
     return errors.Wrap(err, "json error")
   }
 
-  os.MkdirAll(filepath.Join(rootPath, ".maps"), 0777)
-  os.WriteFile(filepath.Join(rootPath, ".maps", detailsObj["BookId"]), []byte(bookName), 0777)
   return nil
 }
 
@@ -191,8 +189,12 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
 
 func getBookAsset(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
-  bookId := vars["bookid"]
+  bookName := vars["book_name"]
   assetName := vars["asset"]
+
+  if strings.HasSuffix(bookName, ".pae1") {
+    bookName = bookName[: len(bookName) - 5]
+  }
 
   rootPath, err := paelito_shared.GetRootPath()
   if err != nil {
@@ -200,12 +202,7 @@ func getBookAsset(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  rawBookName, err := os.ReadFile(filepath.Join(rootPath, ".maps", bookId))
-  if err != nil {
-    errorPage(w, errors.Wrap(err, "os error"))
-    return
-  }
-  obFolder := filepath.Join(rootPath, ".ob", string(rawBookName), "out")
+  obFolder := filepath.Join(rootPath, ".ob", string(bookName), "out")
 
   http.ServeFile(w, r, filepath.Join(obFolder, assetName))
 }

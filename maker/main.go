@@ -1,7 +1,6 @@
 package main
 
 import (
-  "github.com/gomarkdown/markdown"
   "os"
   // "io"
   "fmt"
@@ -13,9 +12,10 @@ import (
   "compress/gzip"
   "time"
   "github.com/bankole7782/paelito/paelito_shared"
-  "bytes"
+  // "bytes"
   "github.com/PuerkitoBio/goquery"
   "strconv"
+  "github.com/russross/blackfriday"
 )
 
 
@@ -42,13 +42,6 @@ func main() {
   }
 
   copy.Copy(filepath.Join(inPath, "cover.png"), filepath.Join(tmpFolder, "cover.png"))
-  notNecessary := []string{"font1.ttf", "font2.ttf", "book.css"}
-  for _, toCopy := range notNecessary {
-    nnPath := filepath.Join(inPath, toCopy)
-    if paelito_shared.DoesPathExists(nnPath) {
-      copy.Copy(nnPath, filepath.Join(tmpFolder, toCopy))
-    }
-  }
 
   // copy all the image files into the program.
   allDirFIS, _ := os.ReadDir(inPath)
@@ -105,15 +98,26 @@ func main() {
       panic(err)
     }
 
-    html := markdown.ToHTML(rawChapter, nil, nil)
-    outFileName := strings.Replace(parts[1], ".md", ".html", 1)
-    os.WriteFile(filepath.Join(tmpFolder, outFileName), html, 0777)
+    // html := markdown.ToHTML(rawChapter, nil, nil)
+    html := string(blackfriday.MarkdownCommon(rawChapter))
 
-    // make the sub table of contents.
-    doc, err := goquery.NewDocumentFromReader(bytes.NewReader(html))
+    // update the links in the document
+    doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
     if err != nil {
       panic(err)
     }
+
+    doc.Find("img").Each(func(i int, s *goquery.Selection) {
+      src, _ := s.Attr("src")
+      if ! strings.HasPrefix(src, "http") {
+        s.SetAttr("src", filepath.Join("/gba/" + os.Args[1] + ".pae1/" + src))
+      }
+    })
+
+    newHtml, _ := doc.Html()
+
+    outFileName := strings.Replace(parts[1], ".md", ".html", 1)
+    os.WriteFile(filepath.Join(tmpFolder, outFileName), []byte(newHtml), 0777)
 
     subTOC := make([]map[string]string, 0)
     doc.Find("h2").Each(func (i int, s *goquery.Selection) {
