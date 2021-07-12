@@ -23,13 +23,13 @@
     margin: 0 auto;
   }
   @font-face {
-    font-family: "Comfortaa";
-    src: url("/gs/Comfortaa-Regular.ttf")
+    font-family: "PatrickHand";
+    src: url("/gs/PatrickHand-Regular.ttf")
   }
   body {
-    font-family: Comfortaa;
+    font-family: PatrickHand;
     background-color: #C9B1B1;
-    /* font-size: 1.2em; */
+    font-size: 1.5em;
     background: url("/gs/sprite.png") repeat;
   }
   div.a_book_meta {
@@ -43,10 +43,13 @@
   .a_book_meta a {
     color: #541D1D;
     border: 3px solid #541D1D;
-    padding: 10px;
+    padding: 0px 5px;
     text-decoration: none;
-    margin-top: 20px;
-    display: block;
+    width: fit-content;
+    margin-left: 0px;
+  }
+  #books_box {
+    margin: 0 auto;
     width: fit-content;
   }
   </style>
@@ -54,23 +57,32 @@
 <body>
   <h1 class="h">Library</h1>
   <p class="h">All books must be placed in <b>{{.LibPath}}</b> to be visible by this program.</p>
-  <br><br>
-  {{range .Books}}
-    <div class="a_book">
-      <img src="/gba/{{.filename}}/cover.png" alt="book cover" />
-      <div class="a_book_meta">
-        Title: <b>{{.title}}</b><br>
-        Comment: <b>{{.comment}}</b><br>
-        Authors: <b> {{.authors}}</b><br>
-        Date Released: <b>{{.date}}</b><br>
-        Version: <b>{{.version}}</b><br>
-        Book Source: <b>{{.source_url}}</b><br>
-        <a href="/view_book/{{.filename}}">Start Reading</a>
+  <div id="books_box">
+    {{range .Books}}
+      <div class="a_book">
+        <img src="/gba/{{.filename}}/cover.png" alt="book cover" />
+        <div class="a_book_meta">
+          {{.title}} ( {{.comment}} )<br>
+          Authors:<br>{{.authors}}<br>
+          Date Released:<br>{{.date}}<br>
+          <a href="{{.source_url}}" class="ext">Book Source</a>&nbsp;&nbsp;<a href="/view_book/{{.filename}}">Start Reading</a>
 
+        </div>
+        <div class="clear"></div>
       </div>
-      <div class="clear"></div>
-    </div>
-  {{end}}
+    {{end}}
+  </div>
   <div class="clear"></div>
+
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $(".ext").click(function(e) {
+      e.preventDefault()
+
+      $.get("/xdg/?p=" + $(e.target).attr("href"))
+    })
+  })
+  </script>
 </body>
 </html>

@@ -4,13 +4,13 @@
   <title>{{$.BookName}} | Paelito: A book reader.</title>
   <style>
     @font-face {
-      font-family: "Comfortaa";
-      src: url("/gs/Comfortaa-Regular.ttf")
+      font-family: "PatrickHand";
+      src: url("/gs/PatrickHand-Regular.ttf")
     }
     body {
       margin: 0px;
-      font-family: "Comfortaa";
-      
+      font-family: "PatrickHand";
+      font-size: 1.5em;
     }
     #main {
       width: calc(100% - 350px);
@@ -35,10 +35,12 @@
       -webkit-user-select: none;
       -webkit-touch-callout: none;
     }
+    #sidenav * {
+      margin: 0px;
+    }
     #sidenav a {
       text-decoration: none;
       color: #360C0C;
-      margin-bottom: 10px;
     }
     #sidenav a:hover {
       color: gray;
@@ -67,11 +69,11 @@
       padding-top: 10px;
     }
     a.lnk {
-      font-size: 1.5em;
-      border: 1px solid gray;
       border-radius: 2px;
       padding: 5px;
       text-decoration: none;
+      color: #541D1D;
+      border: 3px solid #541D1D;
     }
     a.lnk:hover {
       color: gray;
@@ -89,6 +91,10 @@
     }
     .small_i {
       width: 60px;
+    }
+    h1 {
+      width: fit-content;
+      margin: 0 auto;
     }
   </style>
 </head>
@@ -111,7 +117,6 @@
 
 
     <div id="sidenav">
-      <br>
       <a href="/">Library</a><br>
       <a href="/search_book/{{$.BookName}}">Search Book </a><br>
       <a href="#" id="view_para_numbers" data-done="false">Show Paragraph Numbers</a><br>

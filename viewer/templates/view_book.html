@@ -4,12 +4,13 @@
   <title>{{$.BookName}} | Paelito: A book reader.</title>
   <style>
     @font-face {
-      font-family: "Comfortaa";
-      src: url("/gs/Comfortaa-Regular.ttf")
+      font-family: "PatrickHand";
+      src: url("/gs/PatrickHand-Regular.ttf")
     }
     body {
       margin: 0px;
-      font-family: "Comfortaa";
+      font-family: "PatrickHand";
+      font-size: 1.5em;
     }
     #main {
       width: calc(100% - 350px);
@@ -26,6 +27,7 @@
       position: fixed;
       right: 0;
       border-left: 3px solid #764242;
+      overflow: scroll;
       user-select: none;
       -ms-user-select: none;
       -o-user-select:none;
@@ -37,7 +39,9 @@
     #sidenav a {
       text-decoration: none;
       color: #360C0C;
-      margin-bottom: 10px;
+    }
+    #sidenav * {
+      margin: 0px;
     }
     #sidenav a:hover {
       color: gray;
@@ -54,12 +58,13 @@
     }
     #start_book {
       margin: 0 auto;
-      font-size: 1.7em;
       text-decoration: none;
       border: 1px solid gray;
       padding: 5px;
       width: fit-content;
       display: block;
+      color: #541D1D;
+      border: 3px solid #541D1D;
     }
     #start_book:hover {
       color: gray;
@@ -81,7 +86,7 @@
         {{if .HasNewVersion}}
           <div id="loud_shout">
             <h1>This book has a new version</h1>
-            <p>Visit the source at <a href="{{.SourceURL}}">{{.SourceURL}}</a> to get the latest version</p>
+            <p>Visit the source at <a class="ext" href="{{.SourceURL}}">{{.SourceURL}}</a> to get the latest version</p>
           </div>
         {{end}}
         <img src="/gba/{{$.BookName}}/cover.png" class="pimg cover" />
@@ -96,7 +101,6 @@
 
 
     <div id="sidenav">
-      <br>
       <a href="/">Library</a><br>
       <a href="/search_book/{{$.BookName}}">Search Book </a><br>
 
@@ -115,7 +119,7 @@
   <script src="/gs/jquery-3.6.0.min.js"></script>
   <script>
   $(document).ready(function() {
-    $("#page a").click(function(e) {
+    $(".ext").click(function(e) {
       e.preventDefault()
 
       $.get("/xdg/?p=" + $(e.target).attr("href"))
