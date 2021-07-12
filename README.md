@@ -35,11 +35,8 @@ It must contain a single object with the following fields:
 * UpdateURL
 * BookSourceURL
 * Contact
-* BookId
 
 If the authors are about three, you need to include the following fields to your details.json: Author1, Author2, Author3
-
-Create a random string of about 20 characters and set it to BookId
 
 The contact should be an email.
 
@@ -57,6 +54,6 @@ To display the image, say for example dd.png write it such ```![dd](dd.png)```.
 
 
 ### Viewing a book
-Paelito books must be downloaded and placed in the `$HOME/snap/paelito/common/lib`.
+Paelito books must be downloaded and placed in `$HOME\paelito_data` for Windows and `$HOME/snap/paelito/common/lib` for Ubuntu.
 
 You can now run `paelito`
