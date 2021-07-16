@@ -57,16 +57,6 @@ func unpackBook(filename string) error {
     return errors.Wrap(err, "mof error")
   }
 
-  rawDetails, err := os.ReadFile(filepath.Join(obFolder, "out", "details.json"))
-  if err != nil {
-    return errors.Wrap(err, "os error")
-  }
-  detailsObj := make(map[string]string)
-  err = json.Unmarshal(rawDetails, &detailsObj)
-  if err != nil {
-    return errors.Wrap(err, "json error")
-  }
-
   return nil
 }
 
@@ -283,21 +273,9 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
   if paelito_shared.DoesPathExists(filepath.Join(obFolder, "bg.png")) {
     hasBG = true
   }
-  hasCSS := false
-  if paelito_shared.DoesPathExists(filepath.Join(obFolder, "book.css")) {
-    hasCSS = true
-  }
-
-  rawDetails, err := os.ReadFile(filepath.Join(obFolder, "details.json"))
-  if err != nil {
-    errorPage(w, errors.Wrap(err, "os error"))
-    return
-  }
-  detailsObj := make(map[string]string)
-  err = json.Unmarshal(rawDetails, &detailsObj)
-  if err != nil {
-    errorPage(w, errors.Wrap(err, "json error"))
-    return
+  hasFont := false
+  if paelito_shared.DoesPathExists(filepath.Join(obFolder, "font.ttf")) {
+    hasFont = true
   }
 
   type Context struct {
@@ -307,14 +285,13 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     PreviousChapter string
     NextChapter string
     HasBackground bool
-    HasCSS bool
+    HasFont bool
     CurrentChapter string
-    BookId string
     ParaNum int
     IsAGotoPage bool
     ChapterNum int
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book_chapter.html"))
   tmpl.Execute(w, Context{bookName, tocs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG,
-    hasCSS, chapterFilename, detailsObj["BookId"], paraNum, paraNum > 0, chapNum})
+    hasFont, chapterFilename, paraNum, paraNum > 0, chapNum})
 }

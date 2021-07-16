@@ -43,9 +43,9 @@ The contact should be an email.
 #### toc.txt
 toc.txt contains the Root Table of Contents of a paelito book.
 
-It contains a toc item seperated by two newlines (\n).
+It contains a TOC item separated by two newlines (\n).
 
-A toc item is the name of a chapter followed by a new line and then the markdown that contains the text of the chapter.
+A TOC item is the name of a chapter followed by a new line and then the markdown that contains the text of the chapter.
 
 #### On Images
 To include an image into your book, please include the image into the book folder.

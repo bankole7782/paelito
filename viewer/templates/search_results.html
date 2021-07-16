@@ -58,7 +58,7 @@
     }
     {{if .HasBackground}}
     #main {
-      background: url("/gba/{{.BookId}}/bg.png") repeat;
+      background: url("/gba/{{.BookName}}/bg.png") repeat;
     }
     {{end}}
     #page {
@@ -102,7 +102,6 @@
 
 
     <div id="sidenav">
-      <br>
       <a href="/">Library</a><br>
       <a href="/view_book/{{$.BookName}}.pae1">Cover Page</a><br>
       <h3>Search Results</h3>

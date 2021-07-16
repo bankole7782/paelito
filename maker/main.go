@@ -43,6 +43,10 @@ func main() {
 
   copy.Copy(filepath.Join(inPath, "cover.png"), filepath.Join(tmpFolder, "cover.png"))
 
+  if paelito_shared.DoesPathExists(filepath.Join(inPath, "font.ttf")) {
+    copy.Copy(filepath.Join(inPath, "font.ttf"), filepath.Join(tmpFolder, "font.ttf"))
+  }
+  
   // copy all the image files into the program.
   allDirFIS, _ := os.ReadDir(inPath)
   for _, dirFI := range allDirFIS {
@@ -101,7 +105,7 @@ func main() {
     // html := markdown.ToHTML(rawChapter, nil, nil)
     html := string(blackfriday.MarkdownCommon(rawChapter))
 
-    // update the links in the document
+    // update the images in the document
     doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
     if err != nil {
       panic(err)

@@ -148,10 +148,6 @@ func viewASearchResult(w http.ResponseWriter, r *http.Request) {
   if paelito_shared.DoesPathExists(filepath.Join(obFolder, "bg.png")) {
     hasBG = true
   }
-  hasCSS := false
-  if paelito_shared.DoesPathExists(filepath.Join(obFolder, "book.css")) {
-    hasCSS = true
-  }
 
   type Context struct {
     BookName string
@@ -160,9 +156,7 @@ func viewASearchResult(w http.ResponseWriter, r *http.Request) {
     WordPositions []paelito_shared.WordPosition
     WordPosition paelito_shared.WordPosition
     PageContents template.HTML
-    BookId string
     HasBackground bool
-    HasCSS bool
     Found bool
   }
   wordPositions, ok := mapOfWordPositions[strings.ToLower(vars["word"])]
@@ -186,6 +180,6 @@ func viewASearchResult(w http.ResponseWriter, r *http.Request) {
 
   tmpl := template.Must(template.ParseFS(content, "templates/search_results.html"))
   tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"], vars["word"], wordPositions,
-    wordPosition, template.HTML(string(rawChapterHTML)), detailsObj["BookId"], hasBG, hasCSS, ok  })
+    wordPosition, template.HTML(string(rawChapterHTML)), hasBG, ok  })
 
 }
