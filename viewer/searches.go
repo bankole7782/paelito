@@ -43,11 +43,10 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
     type Context struct {
       BookName string
       BookTitle string
-      BookId string
     }
 
     tmpl := template.Must(template.ParseFS(content, "templates/search_book.html"))
-    tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"], detailsObj["BookId"]})
+    tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"]})
 
   } else {
 
@@ -80,7 +79,6 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
       WordPositions []paelito_shared.WordPosition
       WordPosition paelito_shared.WordPosition
       PageContents template.HTML
-      BookId string
       HasBackground bool
       HasCSS bool
       Found bool
@@ -101,7 +99,7 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
 
     tmpl := template.Must(template.ParseFS(content, "templates/search_results.html"))
     tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"], r.FormValue("word_searched_for"), wordPositions,
-      wordPosition, template.HTML(string(rawChapterHTML)), detailsObj["BookId"], hasBG, hasCSS, ok})
+      wordPosition, template.HTML(string(rawChapterHTML)), hasBG, hasCSS, ok})
 
   }
 }

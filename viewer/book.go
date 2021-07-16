@@ -166,14 +166,13 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     HasNewVersion bool
     NewVersion string
     SourceURL string
-    BookId string
   }
   if runtime.GOOS == "linux" {
     wv.SetTitle(bookName + " | Paelito: A book reader.")
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
   tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"], detailsObj, authors,
-    hnv, newVersionStr, detailsObj["BookSourceURL"], detailsObj["BookId"]})
+    hnv, newVersionStr, detailsObj["BookSourceURL"]})
 }
 
 

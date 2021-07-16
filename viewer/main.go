@@ -117,7 +117,6 @@ func main() {
 						"date": detailsObj["Date"],
 						"source_url": detailsObj["BookSourceURL"],
 						"version": detailsObj["Version"],
-						"bookid": detailsObj["BookId"],
           }
           booksMap = append(booksMap, bk)
         }

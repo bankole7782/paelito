@@ -61,7 +61,7 @@ func main() {
   if err != nil {
     panic(err)
   }
-  compulsoryKeys := []string{"FullTitle", "Comment", "Author1", "UpdateURL", "BookSourceURL", "BookId"}
+  compulsoryKeys := []string{"FullTitle", "Comment", "Author1", "UpdateURL", "BookSourceURL",}
   for _, key := range compulsoryKeys {
     _, ok := detailsObj[key]
     if ! ok {
