@@ -56,4 +56,4 @@ To display the image, say for example dd.png write it such ```![dd](dd.png)```.
 ### Viewing a book
 Paelito books must be downloaded and placed in `$HOME\paelito_data` for Windows and `$HOME/snap/paelito/common/lib` for Ubuntu.
 
-You can now run `paelito`
+You can now launch `paelito`

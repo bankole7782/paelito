@@ -38,6 +38,10 @@ func init() {
 			"book_url": "http://saenuma.com/static/the_baileia.pae1",
 			"book_file_name": "the_baileia.pae1",
 		},
+		{
+			"book_url": "http://saenuma.com/static/important_dreams.pae1",
+			"book_file_name": "important_dreams.pae1",
+		},
 	}
 
 	for _, m := range includedBooks {
