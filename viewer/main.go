@@ -14,8 +14,6 @@ import (
 	"encoding/json"
 	"os/exec"
 	"runtime"
-	"github.com/zserge/lorca"
-	"os/signal"
 )
 
 var wv webview.WebView
@@ -167,30 +165,13 @@ func main() {
 
 	}()
 
-	if runtime.GOOS == "windows" {
-		args := []string{"--force-device-scale-factor=1.0", "class=paelito"}
-		ui, err := lorca.New(fmt.Sprintf("http://127.0.0.1:%s", port), "", 1200, 800, args...)
-		if err != nil {
-			panic(err)
-		}
-		defer ui.Close()
+	w := webview.New(debug)
+	wv = w
+	defer w.Destroy()
+	w.SetTitle("Paelito: A book reader.")
+	w.SetSize(1200, 800, webview.HintNone)
 
-		// Wait until the interrupt signal arrives or browser window is closed
-		sigc := make(chan os.Signal)
-		signal.Notify(sigc, os.Interrupt)
-		select {
-		case <-sigc:
-		case <-ui.Done():
-		}
-	} else if runtime.GOOS == "linux" {
-		w := webview.New(debug)
-		wv = w
-		defer w.Destroy()
-		w.SetTitle("Paelito: A book reader.")
-		w.SetSize(1200, 800, webview.HintNone)
-
-		w.Navigate(fmt.Sprintf("http://127.0.0.1:%s", port))
-		w.Run()
-
-	}
+	w.Navigate(fmt.Sprintf("http://127.0.0.1:%s", port))
+	w.Run()
+	
 }
