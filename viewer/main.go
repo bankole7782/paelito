@@ -36,10 +36,6 @@ func init() {
 			"book_url": "http://saenuma.com/static/the_baileia.pae1",
 			"book_file_name": "the_baileia.pae1",
 		},
-		{
-			"book_url": "http://saenuma.com/static/important_dreams.pae1",
-			"book_file_name": "important_dreams.pae1",
-		},
 	}
 
 	for _, m := range includedBooks {
@@ -48,6 +44,11 @@ func init() {
 			fmt.Printf("%+v\n", err)
 			panic(err)
 		}
+	}
+
+	toDelete := filepath.Join(rootPath, "lib", "important_dreams.pae1")
+	if paelito_shared.DoesPathExists(toDelete) {
+		os.Remove(toDelete)
 	}
 }
 
@@ -173,5 +174,5 @@ func main() {
 
 	w.Navigate(fmt.Sprintf("http://127.0.0.1:%s", port))
 	w.Run()
-	
+
 }
