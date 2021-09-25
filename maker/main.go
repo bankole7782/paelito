@@ -52,7 +52,6 @@ func main() {
     }
   }
 
-  fmt.Println(inPath)
   // validate and update book details.zconf
   raw, err := os.ReadFile(filepath.Join(inPath, "details.zconf"))
   if err != nil {
