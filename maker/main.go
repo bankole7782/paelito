@@ -16,6 +16,7 @@ import (
   "github.com/PuerkitoBio/goquery"
   "strconv"
   "github.com/russross/blackfriday"
+  "github.com/bankole7782/zazabul"
 )
 
 
@@ -51,28 +52,33 @@ func main() {
     }
   }
 
-  // validate and update book details.json
-  rawDetails, err := os.ReadFile(filepath.Join(inPath, "details.json"))
+  fmt.Println(inPath)
+  // validate and update book details.zconf
+  raw, err := os.ReadFile(filepath.Join(inPath, "details.zconf"))
   if err != nil {
-    panic("Your book must have a details.json")
+    panic("Your book must have a details.zconf")
   }
-  detailsObj := make(map[string]string)
-  err = json.Unmarshal(rawDetails, &detailsObj)
+  conf, err := zazabul.ParseConfig(string(raw))
   if err != nil {
-    panic(err)
+    panic("Your conf is invalid.")
   }
-  compulsoryKeys := []string{"FullTitle", "Comment", "Author1", "UpdateURL", "BookSourceURL",}
+
+  compulsoryKeys := []string{"title", "comment", "authors", "update_url", "source_url", "contact_email"}
   for _, key := range compulsoryKeys {
-    _, ok := detailsObj[key]
-    if ! ok {
-      panic("Your details.json doesn't have the following field: " + key)
+    if conf.Get(key) == "" {
+      panic("Your details.zconf doesn't have the following field: " + key)      
     }
   }
 
-  detailsObj["Version"] = time.Now().Format(paelito_shared.VersionFormat)
-  detailsObj["Date"] = time.Now().Format("2006-01-02")
-  detailsJson, err := json.Marshal(detailsObj)
-  os.WriteFile(filepath.Join(tmpFolder, "details.json"), detailsJson, 0777)
+  conf.Update(map[string]string {
+    "version": time.Now().Format(paelito_shared.VersionFormat),
+    "date": time.Now().Format("2006-01-02"),
+  })
+
+  err = conf.Write(filepath.Join(tmpFolder, "details.zconf"))
+  if err != nil {
+    panic("Could not write details.zconf")
+  }
 
   // load stop words
   stopWordsList := make([]string, 0)
@@ -216,7 +222,7 @@ func main() {
   }
 
   fmt.Println(outFilePath)
-  fmt.Println("Version: " + detailsObj["Version"] + " for server upload.")
+  fmt.Println("Version: " + conf.Get("version") + " for server upload.")
 }
 
 

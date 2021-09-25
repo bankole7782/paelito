@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/bankole7782/mof v1.0.0
+	github.com/bankole7782/zazabul v1.1.3
 	github.com/gorilla/mux v1.8.0
 	github.com/otiai10/copy v1.5.1
 	github.com/pkg/errors v0.9.1
