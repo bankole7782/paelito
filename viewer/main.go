@@ -11,9 +11,9 @@ import (
 	"html/template"
   "strings"
   "github.com/bankole7782/paelito/paelito_shared"
-	"encoding/json"
 	"os/exec"
 	"runtime"
+  "github.com/bankole7782/zazabul"
 )
 
 var wv webview.WebView
@@ -94,32 +94,26 @@ func main() {
 					}
 					bookName := strings.ReplaceAll(dirFI.Name(), ".pae1", "")
 
-					rawDetails, err := os.ReadFile(filepath.Join(rootPath, ".ob", bookName, "out", "details.json"))
+					rawDetails, err := os.ReadFile(filepath.Join(rootPath, ".ob", bookName, "out", "details.zconf"))
 					if err != nil {
-						errorPage(w, errors.Wrap(err, "os error"))
+						errorPage(w, errors.Wrap(err, "Invalid format. Please redownload an updated version."))
 						return
 					}
-					detailsObj := make(map[string]string)
-					err = json.Unmarshal(rawDetails, &detailsObj)
+					conf, err := zazabul.ParseConfig(string(rawDetails))
 					if err != nil {
-						errorPage(w, errors.Wrap(err, ""))
-					}
-					authors := make([]string, 0)
-					for k, v := range detailsObj {
-						if strings.HasPrefix(k, "Author") {
-							authors = append(authors, v)
-						}
+						errorPage(w, errors.Wrap(err, "zazbul error"))
+						return
 					}
 
           bk := map[string]string {
             "filename" : dirFI.Name(),
             "filename_no_ext": bookName,
-						"title": detailsObj["FullTitle"],
-						"comment": detailsObj["Comment"],
-						"authors": strings.Join(authors, ", "),
-						"date": detailsObj["Date"],
-						"source_url": detailsObj["BookSourceURL"],
-						"version": detailsObj["Version"],
+						"title": conf.Get("title"),
+						"comment": conf.Get("comment"),
+						"authors": conf.Get("authors"),
+						"date": conf.Get("date"),
+						"source_url": conf.Get("source_url"),
+						"version": conf.Get("version"),
           }
           booksMap = append(booksMap, bk)
         }

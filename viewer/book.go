@@ -17,6 +17,8 @@ import (
   "time"
   "strconv"
   "runtime"
+  "github.com/bankole7782/zazabul"
+
 )
 
 
@@ -117,26 +119,20 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     tocs = append(tocs, TableOfContent{rawTOCObj["name"], rawTOCObj["html_filename"], obj})
   }
 
-  rawDetails, err := os.ReadFile(filepath.Join(bookPath, "details.json"))
+  rawDetails, err := os.ReadFile(filepath.Join(bookPath, "details.zconf"))
   if err != nil {
     errorPage(w, errors.Wrap(err, "os error"))
     return
   }
-  detailsObj := make(map[string]string)
-  err = json.Unmarshal(rawDetails, &detailsObj)
+  conf, err := zazabul.ParseConfig(string(rawDetails))
   if err != nil {
-    errorPage(w, errors.Wrap(err, "json error"))
+    errorPage(w, errors.Wrap(err, "zazbul error"))
     return
   }
-  authors := make([]string, 0)
-  for k, v := range detailsObj {
-    if strings.HasPrefix(k, "Author") {
-      authors = append(authors, v)
-    }
-  }
+
 
   newVersionStr := ""
-  resp, err := http.Get( detailsObj["UpdateURL"])
+  resp, err := http.Get( conf.Get("update_url"))
   if err != nil {
     fmt.Println(err)
   }
@@ -149,30 +145,34 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
   }
 
   hnv := false
-  if newVersionStr != "" && newVersionStr != detailsObj["Version"] {
+  if newVersionStr != "" && newVersionStr != conf.Get("version") {
     time1, err1 := time.Parse(paelito_shared.VersionFormat, newVersionStr)
-    time2, err2 := time.Parse(paelito_shared.VersionFormat, detailsObj["Version"])
+    time2, err2 := time.Parse(paelito_shared.VersionFormat, conf.Get("version"))
 
     if err1 == nil && err2 == nil && time2.Before(time1) {
       hnv = true
     }
   }
+
+  authors := strings.Split(conf.Get("authors"), ",")
+
   type Context struct {
     BookName string
     TOC []TableOfContent
     FirstFilename string
-    Details map[string]string
     Authors []string
     HasNewVersion bool
     NewVersion string
     SourceURL string
+    BookVersion string
+    BookDate string
   }
   if runtime.GOOS == "linux" {
     wv.SetTitle(bookName + " | Paelito: A book reader.")
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
-  tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"], detailsObj, authors,
-    hnv, newVersionStr, detailsObj["BookSourceURL"]})
+  tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"], authors,
+    hnv, newVersionStr, conf.Get("source_url"), conf.Get("version"), conf.Get("date")})
 }
 
 

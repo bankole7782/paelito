@@ -12,6 +12,7 @@ import (
   // "fmt"
   "strings"
   "strconv"
+  "github.com/bankole7782/zazabul"
 )
 
 
@@ -27,15 +28,14 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
 
   obFolder := filepath.Join(rootPath, ".ob", bookName, "out")
 
-  rawDetails, err := os.ReadFile(filepath.Join(obFolder, "details.json"))
+  rawDetails, err := os.ReadFile(filepath.Join(obFolder, "details.zconf"))
   if err != nil {
     errorPage(w, errors.Wrap(err, "os error"))
     return
   }
-  detailsObj := make(map[string]string)
-  err = json.Unmarshal(rawDetails, &detailsObj)
+  conf, err := zazabul.ParseConfig(string(rawDetails))
   if err != nil {
-    errorPage(w, errors.Wrap(err, "json error"))
+    errorPage(w, errors.Wrap(err, "zazbul error"))
     return
   }
 
@@ -46,7 +46,7 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
     }
 
     tmpl := template.Must(template.ParseFS(content, "templates/search_book.html"))
-    tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"]})
+    tmpl.Execute(w, Context{bookName, conf.Get("title")})
 
   } else {
 
@@ -98,7 +98,7 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
     }
 
     tmpl := template.Must(template.ParseFS(content, "templates/search_results.html"))
-    tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"], r.FormValue("word_searched_for"), wordPositions,
+    tmpl.Execute(w, Context{bookName, conf.Get("title"), r.FormValue("word_searched_for"), wordPositions,
       wordPosition, template.HTML(string(rawChapterHTML)), hasBG, hasCSS, ok})
 
   }
@@ -117,17 +117,17 @@ func viewASearchResult(w http.ResponseWriter, r *http.Request) {
 
   obFolder := filepath.Join(rootPath, ".ob", bookName, "out")
 
-  rawDetails, err := os.ReadFile(filepath.Join(obFolder, "details.json"))
+  rawDetails, err := os.ReadFile(filepath.Join(obFolder, "details.zconf"))
   if err != nil {
     errorPage(w, errors.Wrap(err, "os error"))
     return
   }
-  detailsObj := make(map[string]string)
-  err = json.Unmarshal(rawDetails, &detailsObj)
+  conf, err := zazabul.ParseConfig(string(rawDetails))
   if err != nil {
-    errorPage(w, errors.Wrap(err, "json error"))
+    errorPage(w, errors.Wrap(err, "zazbul error"))
     return
   }
+
 
   rawIndex, err := os.ReadFile(filepath.Join(obFolder, "index.json"))
   if err != nil {
@@ -177,7 +177,6 @@ func viewASearchResult(w http.ResponseWriter, r *http.Request) {
   }
 
   tmpl := template.Must(template.ParseFS(content, "templates/search_results.html"))
-  tmpl.Execute(w, Context{bookName, detailsObj["FullTitle"], vars["word"], wordPositions,
+  tmpl.Execute(w, Context{bookName, conf.Get("title"), vars["word"], wordPositions,
     wordPosition, template.HTML(string(rawChapterHTML)), hasBG, ok  })
-
 }
