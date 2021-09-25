@@ -1,0 +1,27 @@
+// every item in this config file must be oneline
+
+// title is the name of the book.
+// this is necessary for display purposes.
+title: 
+
+
+// comment is a one line introduction of the book.
+comment:
+
+// authors is the authors of the book seperated by commas,
+// for example: Bankole Ojo, James Ojo, Lala Ojo
+authors:
+
+// update_url is the address that paelito would check expecting a version number.
+// this version number should return the latest version number of the book.
+// this update_url is not supposed to return a html page but a string.
+update_url: 
+
+// source_url is the webpage that details the book and gives a link to 
+// where to get the book file.
+source_url:
+
+// contact_email: is the method of contacting the author(s) of the book.
+// it must be an email
+contact_email:
+
