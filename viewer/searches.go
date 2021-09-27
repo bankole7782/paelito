@@ -71,6 +71,10 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
     if paelito_shared.DoesPathExists(filepath.Join(obFolder, "book.css")) {
       hasCSS = true
     }
+    hasFont := false
+    if paelito_shared.DoesPathExists(filepath.Join(obFolder, "font.ttf")) {
+      hasFont = true
+    }
 
     type Context struct {
       BookName string
@@ -96,11 +100,17 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
       }
 
     }
-
     tmpl := template.Must(template.ParseFS(content, "templates/search_results.html"))
-    tmpl.Execute(w, Context{bookName, conf.Get("title"), r.FormValue("word_searched_for"), wordPositions,
-      wordPosition, template.HTML(string(rawChapterHTML)), hasBG, hasCSS, ok})
+    tmpl2 := template.Must(template.ParseFS(content, "templates/search_results_custom_font.html"))
 
+    if hasFont {
+      tmpl2.Execute(w, Context{bookName, conf.Get("title"), r.FormValue("word_searched_for"), wordPositions,
+        wordPosition, template.HTML(string(rawChapterHTML)), hasBG, hasCSS, ok})
+
+    } else {
+      tmpl.Execute(w, Context{bookName, conf.Get("title"), r.FormValue("word_searched_for"), wordPositions,
+        wordPosition, template.HTML(string(rawChapterHTML)), hasBG, hasCSS, ok})
+    }
   }
 }
 
@@ -146,6 +156,10 @@ func viewASearchResult(w http.ResponseWriter, r *http.Request) {
   if paelito_shared.DoesPathExists(filepath.Join(obFolder, "bg.png")) {
     hasBG = true
   }
+  hasFont := false
+  if paelito_shared.DoesPathExists(filepath.Join(obFolder, "font.ttf")) {
+    hasFont = true
+  }
 
   type Context struct {
     BookName string
@@ -177,6 +191,14 @@ func viewASearchResult(w http.ResponseWriter, r *http.Request) {
   }
 
   tmpl := template.Must(template.ParseFS(content, "templates/search_results.html"))
-  tmpl.Execute(w, Context{bookName, conf.Get("title"), vars["word"], wordPositions,
-    wordPosition, template.HTML(string(rawChapterHTML)), hasBG, ok  })
+  tmpl2 := template.Must(template.ParseFS(content, "templates/search_results_custom_font.html"))
+
+  if hasFont {
+    tmpl2.Execute(w, Context{bookName, conf.Get("title"), vars["word"], wordPositions,
+      wordPosition, template.HTML(string(rawChapterHTML)), hasBG, ok  })
+  } else {
+    tmpl.Execute(w, Context{bookName, conf.Get("title"), vars["word"], wordPositions,
+      wordPosition, template.HTML(string(rawChapterHTML)), hasBG, ok  })
+  }
+
 }

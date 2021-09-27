@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{$.BookName}} | Paelito: A book reader.</title>
+  <style>
+    @font-face {
+      font-family: "CustomFont";
+      src: url("/gba/{{$.BookName}}/font.ttf");
+    }
+    body {
+      margin: 0px;
+      font-family: "CustomFont";
+      font-size: 1.5em;
+    }
+    #main {
+      width: calc(100% - 350px);
+      float: left;
+      margin: 0px;
+    }
+    #sidenav {
+      width: 350px;
+      background-color: #C9B1B1;
+      margin: 0px;
+      height: 100%;
+      padding-left: 10px;
+      position: fixed;
+      right: 0;
+      border-left: 3px solid #764242;
+      overflow: scroll;
+      user-select: none;
+      -ms-user-select: none;
+      -o-user-select:none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      font-size: 0.8em;
+    }
+    #sidenav * {
+      margin: 0px;
+    }
+    #sidenav a {
+      text-decoration: none;
+      color: #360C0C;
+    }
+    #sidenav a:hover {
+      color: gray;
+    }
+    #sidenav a:visited {
+      color: #360C0C;
+    }
+    .pimg {
+      max-width: 500px;
+    }
+    #page, #links {
+      margin: 0 auto;
+      width: 700px;
+    }
+    {{if .HasBackground}}
+    #main {
+      background: url("/gba/{{$.BookName}}/bg.png") repeat;
+    }
+    {{end}}
+    #page {
+      text-align: justify;
+    }
+    #links {
+      border-top: 1px solid gray;
+      margin-bottom: 50px;
+      padding-top: 10px;
+    }
+    a.lnk {
+      border-radius: 2px;
+      padding: 5px;
+      text-decoration: none;
+      color: #541D1D;
+      border: 3px solid #541D1D;
+    }
+    a.lnk:hover {
+      color: gray;
+    }
+    .small_margin {
+      margin-top: 0px;
+    }
+    .p_num {
+      color: #360C0C;
+    }
+    input {
+      border: 1px solid #360C0C;
+      border-radius: 3px;
+      background-color: transparent;
+    }
+    .small_i {
+      width: 60px;
+    }
+    h1 {
+      width: fit-content;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="main">
+      <div id="page">
+        {{.PageContents}}
+      </div>
+      <div id="links">
+        {{if .PreviousChapter}}
+          <a class="lnk" href="/view_book_chapter/{{.BookName}}/{{.PreviousChapter}}">Previous Chapter</a>
+        {{end}}
+        &nbsp;&nbsp;
+        {{if .NextChapter}}
+          <a class="lnk" href="/view_book_chapter/{{.BookName}}/{{.NextChapter}}">Next Chapter</a>
+        {{end}}
+      </div>
+    </div>
+
+
+    <div id="sidenav">
+      <a href="/">Library</a><br>
+      <a href="/search_book/{{$.BookName}}">Search Book </a><br>
+      <a href="#" id="view_para_numbers" data-done="false">Show Paragraph Numbers</a><br>
+      <h3>Go to Paragraph</h3>
+      <form method="get">
+        {{if .IsAGotoPage}}
+          <label>Chapter</label><input class="small_i" type="number" name="chapter_num" value="{{.ChapterNum}}" />
+          <label>Paragraph</label><input class="small_i" type="number" name="para_num" value="{{.ParaNum}}" />
+        {{else}}
+          <label>Chapter</label><input class="small_i" type="number" name="chapter_num" value="1" />
+          <label>Paragraph</label><input class="small_i" type="number" name="para_num" value="1" />
+        {{end}}
+        <input type="submit" value="Go to" />
+      </form>
+      <h3>Table of Contents</h3>
+      <a href="/view_book/{{$.BookName}}.pae1">Cover Page</a><br>
+      <ol>
+        {{range .TOC}}
+          <li>
+            <a href="/view_book_chapter/{{$.BookName}}/{{.FileName}}">{{.Title}}</a>
+            <ol>
+            {{if eq .FileName $.CurrentChapter}}
+              {{range .SubTOC}}
+                <li>
+                  <a class="a_sub_toc" href="#" data-index="{{.index}}">{{.title}}</a>
+                </li>
+              {{end}}
+            {{end}}
+            </ol>
+          </li>
+        {{end}}
+      </ol>
+    </div>
+  </div>
+
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    var paragraphIndexStr = "{{.ParaNum}}";
+    var isAGotoPage = "{{.IsAGotoPage}}"
+    if (isAGotoPage == "true") {
+      var paragraphIndex = parseInt(paragraphIndexStr)
+      if (paragraphIndex -1 < $("p").length) {
+        var el = $("p").get(paragraphIndex - 1);
+        $(el).css("border-bottom", "1px solid black");
+        $("html, body").animate({
+          scrollTop: $(el).offset().top
+        }, 500)
+      }
+    }
+
+
+    $("a.a_sub_toc").click(function(e) {
+      var index = parseInt($(e.target).data("index"))
+      var el = $("h2").get(index-1)
+      $("html, body").animate({
+        scrollTop: $(el).offset().top
+      }, 500)
+    })
+
+    $("#page a").click(function(e) {
+      e.preventDefault()
+
+      $.get("/xdg/?p=" + $(e.target).attr("href"))
+    })
+
+    $("#view_para_numbers").click(function(e) {
+      if ( $(e.target).data("done") == "true" ) {
+        $("#page p").removeClass("small_margin");
+        $(e.target).data("done", "false");
+        $(".p_num").remove();
+        $(e.target).text("Show paragraph numbers")
+      } else {
+        $("#page p").each(function(i, el) {
+          $(el).before("<span class='p_num'>" + (i+1).toString() + "</span>");
+        });
+        $("#page p").addClass("small_margin")
+        $(e.target).data("done", "true");
+        $(e.target).text("Hide paragraph numbers");
+      }
+    })
+
+  })
+  </script>
+
+</body>
+</html>

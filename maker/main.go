@@ -42,6 +42,10 @@ func main() {
     panic("Your book must have a cover.png")
   }
 
+  if paelito_shared.DoesPathExists(filepath.Join(inPath, "font.ttf")) {
+    copy.Copy(filepath.Join(inPath, "font.ttf"), filepath.Join(tmpFolder, "font.ttf"))
+  }
+
   copy.Copy(filepath.Join(inPath, "cover.png"), filepath.Join(tmpFolder, "cover.png"))
 
   // copy all the image files into the program.
@@ -65,7 +69,7 @@ func main() {
   compulsoryKeys := []string{"title", "comment", "authors", "update_url", "source_url", "contact_email"}
   for _, key := range compulsoryKeys {
     if conf.Get(key) == "" {
-      panic("Your details.zconf doesn't have the following field: " + key)      
+      panic("Your details.zconf doesn't have the following field: " + key)
     }
   }
 

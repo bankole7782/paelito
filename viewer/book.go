@@ -290,7 +290,16 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     IsAGotoPage bool
     ChapterNum int
   }
+
   tmpl := template.Must(template.ParseFS(content, "templates/view_book_chapter.html"))
-  tmpl.Execute(w, Context{bookName, tocs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG,
-    hasFont, chapterFilename, paraNum, paraNum > 0, chapNum})
+  tmpl2 := template.Must(template.ParseFS(content, "templates/view_book_chapter_custom_font.html"))
+
+  if hasFont {
+    tmpl2.Execute(w, Context{bookName, tocs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG,
+      hasFont, chapterFilename, paraNum, paraNum > 0, chapNum})
+  } else {
+    tmpl.Execute(w, Context{bookName, tocs, template.HTML(string(rawChapterHTML)), PreviousChapter, NextChapter, hasBG,
+      hasFont, chapterFilename, paraNum, paraNum > 0, chapNum})
+  }
+
 }
