@@ -34,7 +34,6 @@ apps:
 
   paelito:
     command: bin/viewer
-    extensions: [gnome-3-38]
     plugs:
       - network-bind
       - network
