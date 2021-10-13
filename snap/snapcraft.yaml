@@ -22,6 +22,8 @@ parts:
     source: .
     build-packages:
       - libwebkit2gtk-4.0-dev
+    stage-packages:
+      - libwebkit2gtk-4.0-dev
     override-build: |
       set -xe
       go mod download
@@ -37,3 +39,7 @@ apps:
     plugs:
       - network-bind
       - network
+      - desktop
+      - desktop-legacy
+      - wayland
+      - x11
