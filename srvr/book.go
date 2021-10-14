@@ -16,9 +16,7 @@ import (
   "encoding/json"
   "time"
   "strconv"
-  "runtime"
   "github.com/bankole7782/zazabul"
-
 )
 
 
@@ -166,9 +164,6 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     SourceURL string
     BookVersion string
     BookDate string
-  }
-  if runtime.GOOS == "linux" {
-    wv.SetTitle(bookName + " | Paelito: A book reader.")
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
   tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"], authors,

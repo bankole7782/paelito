@@ -10,6 +10,7 @@ import (
 )
 
 const VersionFormat = "20060102T150405MST"
+const Port = "45362"
 
 type WordPosition struct {
   Word string

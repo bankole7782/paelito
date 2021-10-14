@@ -32,9 +32,11 @@ apps:
   maker:
     command: bin/maker
 
-  paelito:
-    command: bin/viewer
-    extensions: [gnome-3-38]
+  srvr:
+    command: bin/srvr
+    daemon: simple
+    restart-condition: on-abnormal
     plugs:
       - network-bind
       - network
+  

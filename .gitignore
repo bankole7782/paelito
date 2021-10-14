@@ -15,3 +15,5 @@
 # vendor/
 
 *.snap
+tmp/
+srvr/tmp/
