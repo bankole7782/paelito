@@ -178,11 +178,6 @@
       }, 500)
     })
 
-    $("#page a").click(function(e) {
-      e.preventDefault()
-
-      $.get("/xdg/?p=" + $(e.target).attr("href"))
-    })
 
     $("#view_para_numbers").click(function(e) {
       if ( $(e.target).data("done") == "true" ) {

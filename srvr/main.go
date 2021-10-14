@@ -10,8 +10,6 @@ import (
 	"html/template"
   "strings"
   "github.com/bankole7782/paelito/paelito_shared"
-	"os/exec"
-	"runtime"
   "github.com/bankole7782/zazabul"
 )
 
@@ -128,13 +126,6 @@ func main() {
 		w.Write(rawObj)
 	})
 
-	r.HandleFunc("/xdg/", func (w http.ResponseWriter, r *http.Request) {
-		if runtime.GOOS == "windows" {
-			exec.Command("cmd", "/C", "start", r.FormValue("p")).Run()
-		} else if runtime.GOOS == "linux" {
-			exec.Command("xdg-open", r.FormValue("p")).Run()
-		}
-	})
 
 	r.HandleFunc("/favicon.ico", func (w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/gs/paelito.ico", 301)

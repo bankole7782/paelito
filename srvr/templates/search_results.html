@@ -132,11 +132,6 @@
       }, 500)
     }
 
-    $("#page a").click(function(e) {
-      e.preventDefault()
-
-      $.get("/xdg/?p=" + $(e.target).attr("href"))
-    })
   })
   </script>
 
