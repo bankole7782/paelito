@@ -31,15 +31,9 @@ apps:
   paelito:
     command: bin/paelito
     extensions: [gnome-3-38]
-
-
-  maker:
-    command: bin/maker
-
-  srvr:
-    command: bin/srvr
-    daemon: simple
-    restart-condition: on-abnormal
     plugs:
       - network-bind
       - network
+
+  maker:
+    command: bin/maker
