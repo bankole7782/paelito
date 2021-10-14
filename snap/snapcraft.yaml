@@ -24,7 +24,6 @@ parts:
       set -xe
       go mod download
       go build -o $SNAPCRAFT_PART_INSTALL/bin/maker ./maker
-      go build -o $SNAPCRAFT_PART_INSTALL/bin/srvr ./srvr
       go build -o $SNAPCRAFT_PART_INSTALL/bin/paelito ./paelito
 
 apps:
