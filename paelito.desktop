@@ -4,5 +4,5 @@ Version=1.2.0
 Terminal=false
 Type=Application
 Name=Paelito
-Exec=paelito
-Icon=${SNAP}/meta/gui/paelito.png
+Exec=/opt/saenuma/paelito/paelito
+Icon=/opt/saenuma/paelito/paelito.png
