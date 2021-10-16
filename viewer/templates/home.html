@@ -74,5 +74,15 @@
   </div>
   <div class="clear"></div>
 
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $(".ext").click(function(e) {
+      e.preventDefault()
+
+      $.get("/xdg/?p=" + $(e.target).attr("href"))
+    })
+  })
+  </script>
 </body>
 </html>

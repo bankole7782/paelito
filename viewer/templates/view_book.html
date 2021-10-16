@@ -62,7 +62,6 @@
       border: 1px solid gray;
       padding: 5px;
       width: fit-content;
-      width: -moz-fit-content;
       display: block;
       color: #541D1D;
       border: 3px solid #541D1D;
@@ -116,6 +115,17 @@
       </ol>
     </div>
   </div>
+
+  <script src="/gs/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $(".ext").click(function(e) {
+      e.preventDefault()
+
+      $.get("/xdg/?p=" + $(e.target).attr("href"))
+    })
+  })
+  </script>
 
 </body>
 </html>

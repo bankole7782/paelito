@@ -5,12 +5,12 @@
 
   <style>
     @font-face {
-      font-family: "PatrickHand";
-      src: url("/gs/PatrickHand-Regular.ttf")
+      font-family: "CustomFont";
+      src: url("/gba/{{$.BookName}}/font.ttf");
     }
     body {
       margin: 0px;
-      font-family: "PatrickHand";
+      font-family: "CustomFont";
       font-size: 1.5em;
     }
     #main {
@@ -132,6 +132,11 @@
       }, 500)
     }
 
+    $("#page a").click(function(e) {
+      e.preventDefault()
+
+      $.get("/xdg/?p=" + $(e.target).attr("href"))
+    })
   })
   </script>
 
