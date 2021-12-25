@@ -20,6 +20,10 @@ parts:
     plugin: go
     source: .
     build-packages:
+      - libgtk-3-0
+      - libwebkit2gtk-4.0-dev
+    stage-packages:
+      - libgtk-3-0
       - libwebkit2gtk-4.0-dev
     override-build: |
       set -xe
