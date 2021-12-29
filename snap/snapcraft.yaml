@@ -23,6 +23,8 @@ parts:
       - libwebkit2gtk-4.0-dev
     stage-packages:
       - libwebkit2gtk-4.0-dev
+      - libnss3
+      - libnspr4
     override-build: |
       set -xe
       go mod download
