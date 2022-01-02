@@ -38,6 +38,7 @@ apps:
     - network
     - network-bind
     - browser-sandbox
+    - process-control
 
 plugs:
   browser-sandbox:
