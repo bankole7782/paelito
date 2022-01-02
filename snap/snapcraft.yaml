@@ -37,10 +37,6 @@ apps:
     plugs:
     - network
     - network-bind
-    - browser-sandbox
+    - browser-support
     - process-control
-
-plugs:
-  browser-sandbox:
-    interface: browser-support
-    allow-sandbox: true
+    - upower-observe
