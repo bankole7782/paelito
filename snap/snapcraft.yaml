@@ -34,9 +34,18 @@ apps:
   paelito:
     command: bin/paelito
     extensions: [gnome-3-38]
+    slots:
+    - dbus-daemon
     plugs:
     - network
     - network-bind
     - browser-support
     - process-control
     - upower-observe
+
+
+slots:
+  dbus-daemon:
+    interface: dbus
+    bus: session
+    name: com.saenuma.paelito
