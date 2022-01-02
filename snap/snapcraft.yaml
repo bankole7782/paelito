@@ -37,5 +37,4 @@ apps:
     plugs:
     - network
     - network-bind
-    # - process-control
-    - browswer-support
+    - browser-support
