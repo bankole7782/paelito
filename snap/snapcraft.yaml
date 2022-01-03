@@ -8,7 +8,7 @@ description: |
   It's source files are written in markdown.
 
 grade: stable # must be 'stable' to release into candidate/stable channels
-confinement: strict # use 'strict' once you have the right plugs and slots
+confinement: devmode # use 'strict' once you have the right plugs and slots
 
 architectures:
   - build-on: amd64
@@ -34,18 +34,9 @@ apps:
   paelito:
     command: bin/paelito
     extensions: [gnome-3-38]
-    slots:
-    - dbus-daemon
     plugs:
     - network
     - network-bind
     - browser-support
     - process-control
     - upower-observe
-
-
-slots:
-  dbus-daemon:
-    interface: dbus
-    bus: session
-    name: com.saenuma.paelito
