@@ -7,7 +7,7 @@ description: |
 
   It's source files are written in markdown.
 
-grade: stable # must be 'stable' to release into candidate/stable channels
+grade: devel # must be 'stable' to release into candidate/stable channels
 confinement: devmode # use 'strict' once you have the right plugs and slots
 
 architectures:
