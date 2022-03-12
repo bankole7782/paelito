@@ -42,10 +42,6 @@ func main() {
     panic("Your book must have a cover.png")
   }
 
-  if paelito_shared.DoesPathExists(filepath.Join(inPath, "font.ttf")) {
-    copy.Copy(filepath.Join(inPath, "font.ttf"), filepath.Join(tmpFolder, "font.ttf"))
-  }
-
   copy.Copy(filepath.Join(inPath, "cover.png"), filepath.Join(tmpFolder, "cover.png"))
 
   // copy all the image files into the program.
@@ -228,7 +224,7 @@ func main() {
   os.WriteFile(versionFilePath, []byte(conf.Get("version")), 0777)
   fmt.Println("book path: ", outFilePath)
   fmt.Println("book version path: ", versionFilePath)
-  
+
   fmt.Println("Upload the two generated files to your server.")
 }
 
