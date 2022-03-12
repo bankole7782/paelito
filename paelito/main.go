@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/webview/webview"
 	"github.com/gorilla/mux"
 	"net/http"
 	"fmt"
@@ -14,9 +13,9 @@ import (
 	"os/exec"
 	"runtime"
   "github.com/bankole7782/zazabul"
+	"os/signal"
 )
 
-var wv webview.WebView
 
 func init() {
 	rootPath, err := paelito_shared.GetRootPath()
@@ -46,19 +45,12 @@ func init() {
 		}
 	}
 
-	toDelete := filepath.Join(rootPath, "lib", "important_dreams.pae1")
-	if paelito_shared.DoesPathExists(toDelete) {
-		os.Remove(toDelete)
-	}
+
 }
 
 
 func main() {
 	port := "45362"
-	debug := false
-	if os.Getenv("PANDOLEE_DEVELOPER") == "true" {
-		debug = true
-	}
   rootPath, err := paelito_shared.GetRootPath()
   if err != nil {
     panic(err)
@@ -75,10 +67,6 @@ func main() {
 	  // r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.FS(contentStatics))))
 
 	  r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	  	if runtime.GOOS == "linux" {
-				wv.SetTitle("Paelito: A book reader.")
-	  	}
-
       dirFIs, err := os.ReadDir(filepath.Join(rootPath, "lib"))
       if err != nil {
         errorPage(w, errors.Wrap(err, "os error"))
@@ -164,13 +152,14 @@ func main() {
 
 	}()
 
-	w := webview.New(debug)
-	wv = w
-	defer w.Destroy()
-	w.SetTitle("Paelito: A book reader.")
-	w.SetSize(1200, 800, webview.HintNone)
-
-	w.Navigate(fmt.Sprintf("http://127.0.0.1:%s", port))
-	w.Run()
+	fmt.Printf("Running at http://127.0.0.1:%s\n", port)
+	exec.Command("xdg-open", fmt.Sprintf("http://127.0.0.1:%s", port) ).Run()
+	// Wait until the interrupt signal arrives or browser window is closed
+	sigc := make(chan os.Signal)
+	signal.Notify(sigc, os.Interrupt)
+	select {
+	case <-sigc:
+	}
+	fmt.Println("Exiting")
 
 }
