@@ -224,8 +224,12 @@ func main() {
     panic(err)
   }
 
-  fmt.Println(outFilePath)
-  fmt.Println("Version: " + conf.Get("version") + " for server upload.")
+  versionFilePath := filepath.Join(rootPath, "out", os.Args[1] + "_version.txt")
+  os.WriteFile(versionFilePath, []byte(conf.Get("version")), 0777)
+  fmt.Println("book path: ", outFilePath)
+  fmt.Println("book version path: ", versionFilePath)
+  
+  fmt.Println("Upload the two generated files to your server.")
 }
 
 
