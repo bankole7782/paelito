@@ -131,7 +131,7 @@ func main() {
 
 		r.HandleFunc("/xdg/", func (w http.ResponseWriter, r *http.Request) {
 			if runtime.GOOS == "windows" {
-				exec.Command("start", r.FormValue("p")).Run()
+				exec.Command("cmd", "/C", "start", r.FormValue("p")).Run()
 			} else if runtime.GOOS == "linux" {
 				exec.Command("xdg-open", r.FormValue("p")).Run()
 			}
@@ -153,7 +153,11 @@ func main() {
 	}()
 
 	fmt.Printf("Running at http://127.0.0.1:%s\n", port)
-	exec.Command("xdg-open", fmt.Sprintf("http://127.0.0.1:%s", port) ).Run()
+	if runtime.GOOS == "windows" {
+		exec.Command("cmd", "/C", "start", fmt.Sprintf("http://127.0.0.1:%s", port)).Output()
+	} else if runtime.GOOS == "linux" {
+		exec.Command("xdg-open", fmt.Sprintf("http://127.0.0.1:%s", port) ).Run()
+	}
 	// Wait until the interrupt signal arrives or browser window is closed
 	sigc := make(chan os.Signal)
 	signal.Notify(sigc, os.Interrupt)
