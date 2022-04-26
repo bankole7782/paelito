@@ -10,5 +10,6 @@ require (
 	github.com/otiai10/copy v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/russross/blackfriday v1.6.0
+	github.com/webview/webview v0.0.0-20220418180601-150aede5f486
 	golang.org/x/net v0.0.0-20200222125558-5a598a2470a0 // indirect
 )
