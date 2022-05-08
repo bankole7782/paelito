@@ -28,11 +28,11 @@ func init() {
 
 	includedBooks := []map[string]string {
 		{
-			"book_url": "http://sae.ng/static/the_botanum.pae1",
+			"book_url": "http://sae.ng/static/books/the_botanum.pae1",
 			"book_file_name": "the_botanum.pae1",
 		},
 		{
-			"book_url": "http://sae.ng/static/the_baileia.pae1",
+			"book_url": "http://sae.ng/static/books/the_baileia.pae1",
 			"book_file_name": "the_baileia.pae1",
 		},
 	}
