@@ -13,7 +13,7 @@ import (
 	"os/exec"
 	"runtime"
   "github.com/bankole7782/zazabul"
-	"github.com/webview/webview"
+	"os/signal"
 )
 
 
@@ -55,11 +55,6 @@ func main() {
   if err != nil {
     panic(err)
   }
-
-	debug := false
-	if os.Getenv("SAENUMA_DEVELOPER") == "true" {
-		debug = true
-	}
 
   defer func() {
 		emptyDir(filepath.Join(rootPath, ".ob"))
@@ -158,11 +153,17 @@ func main() {
 	}()
 
 
-	w := webview.New(debug)
-	defer w.Destroy()
-	w.SetTitle("Paelito a book reader")
-	w.SetSize(1200, 600, webview.HintNone)
-	w.Navigate(fmt.Sprintf("http://127.0.0.1:%s", port))
-	w.Run()
-
+	fmt.Printf("Running at http://127.0.0.1:%s\n", port)
+	if runtime.GOOS == "windows" {
+		exec.Command("cmd", "/C", "start", fmt.Sprintf("http://127.0.0.1:%s", port)).Output()
+	} else if runtime.GOOS == "linux" {
+		exec.Command("xdg-open", fmt.Sprintf("http://127.0.0.1:%s", port) ).Run()
+	}
+	// Wait until the interrupt signal arrives or browser window is closed
+	sigc := make(chan os.Signal)
+	signal.Notify(sigc, os.Interrupt)
+	select {
+	case <-sigc:
+	}
+	fmt.Println("Exiting")
 }
