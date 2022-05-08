@@ -97,7 +97,10 @@ func main() {
   newTOCObjs := make([]map[string]string, 0)
   for _, part := range strings.Split(string(rawTOC), "\n\n") {
     parts := strings.Split(strings.TrimSpace(part), "\n")
-
+    if len(parts) != 2 {
+      continue
+    }
+    
     rawChapter, err := os.ReadFile(filepath.Join(inPath, parts[1]))
     if err != nil {
       panic(err)
