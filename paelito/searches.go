@@ -67,10 +67,6 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
     if paelito_shared.DoesPathExists(filepath.Join(obFolder, "bg.png")) {
       hasBG = true
     }
-    hasCSS := false
-    if paelito_shared.DoesPathExists(filepath.Join(obFolder, "book.css")) {
-      hasCSS = true
-    }
     hasFont := false
     if paelito_shared.DoesPathExists(filepath.Join(obFolder, "font.ttf")) {
       hasFont = true
@@ -84,7 +80,6 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
       WordPosition paelito_shared.WordPosition
       PageContents template.HTML
       HasBackground bool
-      HasCSS bool
       Found bool
     }
     wordPositions, ok := mapOfWordPositions[strings.ToLower(r.FormValue("word_searched_for"))]
@@ -105,11 +100,11 @@ func searchBook(w http.ResponseWriter, r *http.Request) {
 
     if hasFont {
       tmpl2.Execute(w, Context{bookName, conf.Get("title"), r.FormValue("word_searched_for"), wordPositions,
-        wordPosition, template.HTML(string(rawChapterHTML)), hasBG, hasCSS, ok})
+        wordPosition, template.HTML(string(rawChapterHTML)), hasBG, ok})
 
     } else {
       tmpl.Execute(w, Context{bookName, conf.Get("title"), r.FormValue("word_searched_for"), wordPositions,
-        wordPosition, template.HTML(string(rawChapterHTML)), hasBG, hasCSS, ok})
+        wordPosition, template.HTML(string(rawChapterHTML)), hasBG, ok})
     }
   }
 }

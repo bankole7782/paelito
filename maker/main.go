@@ -44,6 +44,10 @@ func main() {
 
   copy.Copy(filepath.Join(inPath, "cover.png"), filepath.Join(tmpFolder, "cover.png"))
 
+  if paelito_shared.DoesPathExists(filepath.Join(inPath, "font.ttf")) {
+    copy.Copy(filepath.Join(inPath, "font.ttf"), filepath.Join(tmpFolder, "font.ttf"))
+  }
+  
   // copy all the image files into the program.
   allDirFIS, _ := os.ReadDir(inPath)
   for _, dirFI := range allDirFIS {
@@ -100,7 +104,7 @@ func main() {
     if len(parts) != 2 {
       continue
     }
-    
+
     rawChapter, err := os.ReadFile(filepath.Join(inPath, parts[1]))
     if err != nil {
       panic(err)
