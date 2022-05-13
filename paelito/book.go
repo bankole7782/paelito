@@ -152,6 +152,10 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     }
   }
 
+  ibb := false
+  if bookName == "the_baileia" || bookName == "the_botanum" {
+    ibb = true
+  }
   authors := strings.Split(conf.Get("authors"), ",")
 
   type Context struct {
@@ -164,10 +168,12 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     SourceURL string
     BookVersion string
     BookDate string
+    IsBundledBook bool
   }
   tmpl := template.Must(template.ParseFS(content, "templates/view_book.html"))
   tmpl.Execute(w, Context{bookName, tocs, rawTOCObjs[0]["html_filename"], authors,
-    hnv, newVersionStr, conf.Get("source_url"), conf.Get("version"), conf.Get("date")})
+    hnv, newVersionStr, conf.Get("source_url"), conf.Get("version"), conf.Get("date"),
+    ibb})
 }
 
 

@@ -84,10 +84,17 @@
     <div id="main">
       <div id="page">
         {{if .HasNewVersion}}
+          {{ if .IsBundledBook}}
+          <div id="loud_shout">
+            <h1>This book has a new version</h1>
+            <p>Delete the book and it would be redownloaded.</p>
+          </div>
+          {{else}}
           <div id="loud_shout">
             <h1>This book has a new version</h1>
             <p>Visit the source at <a class="ext" href="{{.SourceURL}}">{{.SourceURL}}</a> to get the latest version</p>
           </div>
+          {{end}}
         {{end}}
         <img src="/gba/{{$.BookName}}/cover.png" class="pimg cover" />
         <h2>Book Details</h2>
