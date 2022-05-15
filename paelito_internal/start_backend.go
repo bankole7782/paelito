@@ -75,6 +75,9 @@ func StartBackend() {
 		    }
 		  }
 
+			newVersionStr = strings.TrimSpace(newVersionStr)
+			currentVersionStr = strings.TrimSpace(currentVersionStr)
+
 		  hnv := false
 		  if newVersionStr != "" && newVersionStr != currentVersionStr {
 		    time1, err1 := time.Parse(paelito_shared.VersionFormat, newVersionStr)
@@ -84,10 +87,11 @@ func StartBackend() {
 		      hnv = true
 		    }
 		  }
-			
+
 			if hnv == true {
 				tmpl := template.Must(template.ParseFS(content, "templates/has_new_version.html"))
 				tmpl.Execute(w, nil)
+				return
 			}
 
 		}
