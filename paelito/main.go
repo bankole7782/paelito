@@ -2,10 +2,18 @@ package main
 
 import (
   "github.com/bankole7782/paelito/paelito_internal"
+  "fmt"
+  "runtime"
+  "os/exec"
+  "os/signal"
+  "os"
+
 )
 
 
 func main() {
+  port := "45362"
+  
   go paelito_internal.StartBackend()
 
   fmt.Printf("Running at http://127.0.0.1:%s\n", port)
