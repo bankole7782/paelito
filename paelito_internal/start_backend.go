@@ -13,6 +13,8 @@ import (
 	"os/exec"
 	"runtime"
   "github.com/bankole7782/zazabul"
+	"io"
+	"time"
 )
 
 
@@ -59,6 +61,39 @@ func StartBackend() {
   // r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.FS(contentStatics))))
 
   r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if runtime.GOOS == "windows" {
+			newVersionStr := ""
+		  resp, err := http.Get("https://sae.ng/static/wapps/paelito.txt")
+		  if err != nil {
+		    fmt.Println(err)
+		  }
+		  if err == nil {
+		    defer resp.Body.Close()
+		    body, err := io.ReadAll(resp.Body)
+		    if err == nil && resp.StatusCode == 200 {
+		      newVersionStr = string(body)
+		    }
+		  }
+
+		  hnv := false
+		  if newVersionStr != "" && newVersionStr != currentVersionStr {
+		    time1, err1 := time.Parse(paelito_shared.VersionFormat, newVersionStr)
+		    time2, err2 := time.Parse(paelito_shared.VersionFormat, currentVersionStr)
+
+		    if err1 == nil && err2 == nil && time2.Before(time1) {
+		      hnv = true
+		    }
+		  }
+			
+			if hnv == true {
+				tmpl := template.Must(template.ParseFS(content, "templates/has_new_version.html"))
+				tmpl.Execute(w, nil)
+			}
+
+		}
+
+
+
     dirFIs, err := os.ReadDir(filepath.Join(rootPath, "lib"))
     if err != nil {
       errorPage(w, errors.Wrap(err, "os error"))
