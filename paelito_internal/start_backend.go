@@ -16,11 +16,12 @@ import (
 )
 
 
-func init() {
+func StartBackend() {
+
 	rootPath, err := paelito_shared.GetRootPath()
-  if err != nil {
-    panic(err)
-  }
+	if err != nil {
+		panic(err)
+	}
 
 	os.MkdirAll(filepath.Join(rootPath, "lib"), 0777)
 	os.MkdirAll(filepath.Join(rootPath, "p"), 0777)
@@ -45,15 +46,7 @@ func init() {
 	}
 
 
-}
-
-
-func StartBackend() {
 	port := "45362"
-  rootPath, err := paelito_shared.GetRootPath()
-  if err != nil {
-    panic(err)
-  }
 
   defer func() {
 		emptyDir(filepath.Join(rootPath, ".ob"))
