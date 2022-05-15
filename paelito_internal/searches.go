@@ -1,4 +1,4 @@
-package main
+package paelito_internal
 
 import (
   "net/http"
