@@ -4,12 +4,12 @@
   <title>{{$.BookName}} | Paelito: A book reader.</title>
   <style>
     @font-face {
-      font-family: "CustomFont";
-      src: url("/gba/{{$.BookName}}/font.ttf");
+      font-family: "PatrickHand";
+      src: url("/gs/PatrickHand-Regular.ttf")
     }
     body {
       margin: 0px;
-      font-family: "CustomFont";
+      font-family: "PatrickHand";
       font-size: 1.5em;
     }
     #main {
@@ -34,7 +34,6 @@
       -khtml-user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
-      font-size: 0.8em;
     }
     #sidenav * {
       margin: 0px;
@@ -181,7 +180,8 @@
     $("#page a").click(function(e) {
       e.preventDefault()
 
-      $.get("/xdg/?p=" + $(e.target).attr("href"))
+      $.get("/ext_launch/?p=" + $(e.target).attr("href"))
+
     })
 
     $("#view_para_numbers").click(function(e) {

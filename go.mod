@@ -7,9 +7,9 @@ require (
 	github.com/bankole7782/mof v1.0.0
 	github.com/bankole7782/zazabul v1.1.3
 	github.com/gorilla/mux v1.8.0
+	github.com/jchv/go-webview2 v0.0.0-20220506072306-ae3fc72a5edd
 	github.com/otiai10/copy v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/russross/blackfriday v1.6.0
-	github.com/webview/webview v0.0.0-20220418180601-150aede5f486
 	golang.org/x/net v0.0.0-20200222125558-5a598a2470a0 // indirect
 )

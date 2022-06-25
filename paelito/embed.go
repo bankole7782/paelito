@@ -1,4 +1,4 @@
-package paelito_internal
+package main
 
 import (
   "embed"

@@ -3,7 +3,6 @@ package paelito_shared
 import (
   "os"
   "path/filepath"
-  "strings"
   "github.com/pkg/errors"
   "math/rand"
   "time"
@@ -23,11 +22,8 @@ func GetRootPath() (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "os error")
 	}
-	dd := os.Getenv("SNAP_USER_COMMON")
-	if strings.HasPrefix(dd, filepath.Join(hd, "snap", "go")) || dd == "" {
-		dd = filepath.Join(hd, "paelito_data")
-    os.MkdirAll(dd, 0777)
-	}
+	dd := filepath.Join(hd, "Paelito")
+  os.MkdirAll(dd, 0777)
 
 	return dd, nil
 }

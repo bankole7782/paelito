@@ -47,7 +47,7 @@ func main() {
   if paelito_shared.DoesPathExists(filepath.Join(inPath, "font.ttf")) {
     copy.Copy(filepath.Join(inPath, "font.ttf"), filepath.Join(tmpFolder, "font.ttf"))
   }
-  
+
   // copy all the image files into the program.
   allDirFIS, _ := os.ReadDir(inPath)
   for _, dirFI := range allDirFIS {
@@ -99,8 +99,8 @@ func main() {
   mapOfWordPositions := make(map[string][]paelito_shared.WordPosition)
 
   newTOCObjs := make([]map[string]string, 0)
-  for _, part := range strings.Split(string(rawTOC), "\n\n") {
-    parts := strings.Split(strings.TrimSpace(part), "\n")
+  for _, part := range strings.Split(string(rawTOC), "\r\n\r\n") {
+    parts := strings.Split(strings.TrimSpace(part), "\r\n")
     if len(parts) != 2 {
       continue
     }

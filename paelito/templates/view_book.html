@@ -129,7 +129,8 @@
     $(".ext").click(function(e) {
       e.preventDefault()
 
-      $.get("/xdg/?p=" + $(e.target).attr("href"))
+      $.get("/ext_launch/?p=" + $(e.target).attr("href"))
+
     })
   })
   </script>

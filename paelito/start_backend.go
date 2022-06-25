@@ -1,4 +1,4 @@
-package paelito_internal
+package main
 
 import (
 	"github.com/gorilla/mux"
@@ -61,42 +61,31 @@ func StartBackend() {
   // r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.FS(contentStatics))))
 
   r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if runtime.GOOS == "windows" {
-			newVersionStr := ""
-		  resp, err := http.Get("https://sae.ng/static/wapps/paelito.txt")
-		  if err != nil {
-		    fmt.Println(err)
-		  }
-		  if err == nil {
-		    defer resp.Body.Close()
-		    body, err := io.ReadAll(resp.Body)
-		    if err == nil && resp.StatusCode == 200 {
-		      newVersionStr = string(body)
-		    }
-		  }
+		newVersionStr := ""
+	  resp, err := http.Get("https://sae.ng/static/wapps/paelito.txt")
+	  if err != nil {
+	    fmt.Println(err)
+	  }
+	  if err == nil {
+	    defer resp.Body.Close()
+	    body, err := io.ReadAll(resp.Body)
+	    if err == nil && resp.StatusCode == 200 {
+	      newVersionStr = string(body)
+	    }
+	  }
 
-			newVersionStr = strings.TrimSpace(newVersionStr)
-			currentVersionStr = strings.TrimSpace(currentVersionStr)
+		newVersionStr = strings.TrimSpace(newVersionStr)
+		currentVersionStr = strings.TrimSpace(currentVersionStr)
 
-		  hnv := false
-		  if newVersionStr != "" && newVersionStr != currentVersionStr {
-		    time1, err1 := time.Parse(paelito_shared.VersionFormat, newVersionStr)
-		    time2, err2 := time.Parse(paelito_shared.VersionFormat, currentVersionStr)
+	  hnv := false
+	  if newVersionStr != "" && newVersionStr != currentVersionStr {
+	    time1, err1 := time.Parse(paelito_shared.VersionFormat, newVersionStr)
+	    time2, err2 := time.Parse(paelito_shared.VersionFormat, currentVersionStr)
 
-		    if err1 == nil && err2 == nil && time2.Before(time1) {
-		      hnv = true
-		    }
-		  }
-
-			if hnv == true {
-				tmpl := template.Must(template.ParseFS(content, "templates/has_new_version.html"))
-				tmpl.Execute(w, nil)
-				return
-			}
-
-		}
-
-
+	    if err1 == nil && err2 == nil && time2.Before(time1) {
+	      hnv = true
+	    }
+	  }
 
     dirFIs, err := os.ReadDir(filepath.Join(rootPath, "lib"))
     if err != nil {
@@ -140,9 +129,10 @@ func StartBackend() {
     type Context struct {
       Books []map[string]string
 			LibPath string
+			HasNewVersion bool
     }
     tmpl := template.Must(template.ParseFS(content, "templates/home.html"))
-    tmpl.Execute(w, Context{booksMap, filepath.Join(rootPath, "lib")})
+    tmpl.Execute(w, Context{booksMap, filepath.Join(rootPath, "lib"), hnv})
   })
 
   r.HandleFunc("/view_book/{book_name}", viewBook)
@@ -160,11 +150,9 @@ func StartBackend() {
 		w.Write(rawObj)
 	})
 
-	r.HandleFunc("/xdg/", func (w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/ext_launch/", func (w http.ResponseWriter, r *http.Request) {
 		if runtime.GOOS == "windows" {
 			exec.Command("cmd", "/C", "start", r.FormValue("p")).Run()
-		} else if runtime.GOOS == "linux" {
-			exec.Command("xdg-open", r.FormValue("p")).Run()
 		}
 	})
 

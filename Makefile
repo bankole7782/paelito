@@ -1,9 +1,3 @@
 build:
-	rm -rf bin
-	mkdir -p bin
-
-	go build -o bin/paelito_maker ./maker
-	go build -o bin ./paelito
-
-	cp paelito.desktop bin/paelito.desktop
-	cp paelito.png bin/paelito.png
+	go build -o bin\paelito_maker.exe .\maker
+	go build -ldflags="-H windowsgui" -o bin\paelito.exe .\paelito
