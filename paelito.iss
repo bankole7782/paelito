@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Paelito"
-#define MyAppVersion "3.1.0"
+#define MyAppVersion "3.2.0"
 #define MyAppPublisher "Saenuma Digital Ltd"
 #define MyAppURL "https://sae.ng/paelito"
 #define MyAppExeName "paelito.exe"
@@ -21,10 +21,10 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DisableDirPage=yes
 DisableProgramGroupPage=yes
-LicenseFile=C:\Users\Bankole Ojo\paelito\LICENSE
+LicenseFile=C:\Users\Bankole Ojo\p\paelito\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=C:\Users\Bankole Ojo\paelito_win\bin
+OutputDir=C:\Users\Bankole Ojo\p\paelito\bin
 OutputBaseFilename=paelito_setup
 Compression=lzma
 SolidCompression=yes
@@ -37,8 +37,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\Bankole Ojo\paelito_win\bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Bankole Ojo\paelito\bin\paelito_maker.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Bankole Ojo\p\paelito\bin\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Bankole Ojo\p\paelito\bin\paelito_maker.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
