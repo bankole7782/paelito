@@ -13,7 +13,7 @@ import (
   // "bytes"
   "github.com/PuerkitoBio/goquery"
   "strconv"
-  "github.com/russross/blackfriday"
+  "github.com/russross/blackfriday/v2"
   "github.com/bankole7782/zazabul"
 )
 
@@ -32,9 +32,10 @@ func main() {
   if ! paelito_shared.DoesPathExists(inPath) {
     panic(fmt.Sprintf("The book dir '%s' is not in '%s'", os.Args[1], rootPath))
   }
-  tmpFolder := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15), os.Args[1])
+  tmpFolderOut := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15))
+  tmpFolder := filepath.Join(tmpFolderOut, os.Args[1])
   os.MkdirAll(tmpFolder, 0777)
-  defer os.RemoveAll(tmpFolder)
+  defer os.RemoveAll(tmpFolderOut)
 
   if ! paelito_shared.DoesPathExists(filepath.Join(inPath, "cover.png")) {
     panic("Your book must have a cover.png")
@@ -108,8 +109,7 @@ func main() {
       panic(err)
     }
 
-    // html := markdown.ToHTML(rawChapter, nil, nil)
-    html := string(blackfriday.MarkdownCommon(rawChapter))
+    html := string( blackfriday.Run(rawChapter) )
 
     // update the images in the document
     doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
