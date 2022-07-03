@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Paelito"
-#define MyAppVersion "3.2.0"
+#define MyAppVersion "20220703T210349WAT"
 #define MyAppPublisher "Saenuma Digital Ltd"
 #define MyAppURL "https://sae.ng/paelito"
 #define MyAppExeName "paelito.exe"
