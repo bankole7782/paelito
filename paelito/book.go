@@ -3,11 +3,7 @@ package main
 import (
   "net/http"
   "os"
-  "github.com/gorilla/mux"
   "path/filepath"
-  "github.com/bankole7782/mof"
-  "github.com/bankole7782/paelito/paelito_shared"
-  "compress/gzip"
   "github.com/pkg/errors"
   "io"
   "fmt"
@@ -16,7 +12,9 @@ import (
   "encoding/json"
   "time"
   "strconv"
+  "github.com/gorilla/mux"
   "github.com/bankole7782/zazabul"
+  "github.com/bankole7782/paelito/paelito_shared"
 )
 
 
@@ -26,35 +24,15 @@ func unpackBook(filename string) error {
     return err
   }
 
-  bookName := strings.ReplaceAll(filename, ".pae1", "")
-  obFolder := filepath.Join(rootPath, ".ob", bookName)
-  os.MkdirAll(obFolder, 0777)
-
-  inPath := filepath.Join(rootPath, "lib", filename)
-  inputFile, err := os.Open(inPath)
-  if err != nil {
-    return errors.Wrap(err, "os error")
-  }
-  defer inputFile.Close()
-
-  zr, err := gzip.NewReader(inputFile)
-  if err != nil {
-    return errors.Wrap(err, "gzip error")
+  bookName := strings.ReplaceAll(filename, ".zip", "")
+  obFolder := filepath.Join(rootPath, ".ob")
+  if paelito_shared.DoesPathExists(filepath.Join(obFolder, bookName)) {
+    os.RemoveAll(filepath.Join(obFolder, bookName))
   }
 
-  mofBytes, err := io.ReadAll(zr)
+  err = paelito_shared.UnzipSource(filepath.Join(rootPath, "lib", filename), obFolder)
   if err != nil {
-    return errors.Wrap(err, "io error")
-  }
-
-  err = os.WriteFile(filepath.Join(obFolder, "out.mof"), mofBytes, 0777)
-  if err != nil {
-    return errors.Wrap(err, "os error")
-  }
-
-  err = mof.UndoMOF(filepath.Join(obFolder, "out.mof"), obFolder)
-  if err != nil {
-    return errors.Wrap(err, "mof error")
+    return err
   }
 
   return nil
@@ -83,10 +61,10 @@ func viewBook(w http.ResponseWriter, r *http.Request) {
     errorPage(w, err)
     return
   }
-  bookName := strings.ReplaceAll(filename, ".pae1", "")
+  bookName := strings.ReplaceAll(filename, ".zip", "")
   obFolder := filepath.Join(rootPath, ".ob", bookName)
 
-  bookPath := filepath.Join(obFolder, "out")
+  bookPath := obFolder
 
   rawTOC, err := os.ReadFile(filepath.Join(bookPath, "rtoc.json"))
   if err != nil {
@@ -182,8 +160,8 @@ func getBookAsset(w http.ResponseWriter, r *http.Request) {
   bookName := vars["book_name"]
   assetName := vars["asset"]
 
-  if strings.HasSuffix(bookName, ".pae1") {
-    bookName = bookName[: len(bookName) - 5]
+  if strings.HasSuffix(bookName, ".zip") {
+    bookName = bookName[: len(bookName) - len(".zip")]
   }
 
   rootPath, err := paelito_shared.GetRootPath()
@@ -192,7 +170,7 @@ func getBookAsset(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  obFolder := filepath.Join(rootPath, ".ob", string(bookName), "out")
+  obFolder := filepath.Join(rootPath, ".ob", string(bookName))
 
   http.ServeFile(w, r, filepath.Join(obFolder, assetName))
 }
@@ -208,7 +186,7 @@ func viewBookChapter(w http.ResponseWriter, r *http.Request) {
     errorPage(w, err)
     return
   }
-  obFolder := filepath.Join(rootPath, ".ob", bookName, "out")
+  obFolder := filepath.Join(rootPath, ".ob", bookName)
 
   rawTOC, err := os.ReadFile(filepath.Join(obFolder, "rtoc.json"))
   if err != nil {

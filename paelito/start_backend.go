@@ -27,25 +27,25 @@ func StartBackend() {
 
 	os.MkdirAll(filepath.Join(rootPath, "lib"), 0777)
 	os.MkdirAll(filepath.Join(rootPath, "p"), 0777)
-
-	includedBooks := []map[string]string {
-		{
-			"book_url": "http://sae.ng/static/books/the_botanum.pae1",
-			"book_file_name": "the_botanum.pae1",
-		},
-		{
-			"book_url": "http://sae.ng/static/books/the_baileia.pae1",
-			"book_file_name": "the_baileia.pae1",
-		},
-	}
-
-	for _, m := range includedBooks {
-		err := downloadFile(m["book_url"], filepath.Join(rootPath, "lib", m["book_file_name"]))
-		if err != nil {
-			fmt.Printf("%+v\n", err)
-			panic(err)
-		}
-	}
+	//
+	// includedBooks := []map[string]string {
+	// 	{
+	// 		"book_url": "http://sae.ng/static/books/the_botanum.pae1",
+	// 		"book_file_name": "the_botanum.pae1",
+	// 	},
+	// 	{
+	// 		"book_url": "http://sae.ng/static/books/the_baileia.pae1",
+	// 		"book_file_name": "the_baileia.pae1",
+	// 	},
+	// }
+	//
+	// for _, m := range includedBooks {
+	// 	err := downloadFile(m["book_url"], filepath.Join(rootPath, "lib", m["book_file_name"]))
+	// 	if err != nil {
+	// 		fmt.Printf("%+v\n", err)
+	// 		panic(err)
+	// 	}
+	// }
 
 
 	port := "45362"
@@ -94,15 +94,15 @@ func StartBackend() {
     }
     booksMap := make([]map[string]string, 0)
     for _, dirFI := range dirFIs {
-      if strings.HasSuffix(dirFI.Name(), ".pae1") {
+      if strings.HasSuffix(dirFI.Name(), ".zip") {
 				err = unpackBook(dirFI.Name())
 				if err != nil {
 					errorPage(w, err)
 					return
 				}
-				bookName := strings.ReplaceAll(dirFI.Name(), ".pae1", "")
+				bookName := strings.ReplaceAll(dirFI.Name(), ".zip", "")
 
-				rawDetails, err := os.ReadFile(filepath.Join(rootPath, ".ob", bookName, "out", "details.zconf"))
+				rawDetails, err := os.ReadFile(filepath.Join(rootPath, ".ob", bookName, "details.zconf"))
 				if err != nil {
 					errorPage(w, errors.Wrap(err, "Invalid format. Please redownload an updated version."))
 					return

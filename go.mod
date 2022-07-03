@@ -4,7 +4,6 @@ go 1.16
 
 require (
 	github.com/PuerkitoBio/goquery v1.6.1
-	github.com/bankole7782/mof v1.0.0
 	github.com/bankole7782/zazabul v1.1.3
 	github.com/gorilla/mux v1.8.0
 	github.com/jchv/go-webview2 v0.0.0-20220506072306-ae3fc72a5edd

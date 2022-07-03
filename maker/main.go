@@ -8,8 +8,6 @@ import (
   "github.com/otiai10/copy"
   "encoding/json"
   "strings"
-  "github.com/bankole7782/mof"
-  "compress/gzip"
   "time"
   "github.com/bankole7782/paelito/paelito_shared"
   // "bytes"
@@ -34,7 +32,7 @@ func main() {
   if ! paelito_shared.DoesPathExists(inPath) {
     panic(fmt.Sprintf("The book dir '%s' is not in '%s'", os.Args[1], rootPath))
   }
-  tmpFolder := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15))
+  tmpFolder := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15), os.Args[1])
   os.MkdirAll(tmpFolder, 0777)
   defer os.RemoveAll(tmpFolder)
 
@@ -193,37 +191,14 @@ func main() {
   }
   os.WriteFile(filepath.Join(tmpFolder, "index.json"), mapOfWordPositionsJson, 0777)
 
-  tmpFolder2 := filepath.Join(rootPath, ".mtmp-" + paelito_shared.UntestedRandomString(15))
-  os.MkdirAll(tmpFolder2, 0777)
-  defer os.RemoveAll(tmpFolder2)
-
-  err = mof.MOF(tmpFolder, filepath.Join(tmpFolder2, "out.mof"))
-  if err != nil {
-    panic(err)
-  }
-
-  outFilePath := filepath.Join(rootPath, "out", os.Args[1] + ".pae1")
+  outFilePath := filepath.Join(rootPath, "out", os.Args[1] + ".zip")
   os.MkdirAll(filepath.Join(rootPath, "out"), 0777)
-  outFile, err := os.Create(outFilePath)
-  if err != nil {
-    panic(err)
-  }
-  defer outFile.Close()
-  zw := gzip.NewWriter(outFile)
-  zw.Name = os.Args[1] + ".pae1"
-  zw.Comment = "A book"
-  zw.ModTime = time.Now()
-
-  mofBytes, err := os.ReadFile(filepath.Join(tmpFolder2, "out.mof"))
-  if err != nil {
-    panic(err)
-  }
-  _, err = zw.Write(mofBytes)
-  if err != nil {
-    panic(err)
+  if paelito_shared.DoesPathExists(outFilePath) {
+    os.Remove(outFilePath)
   }
 
-  if err := zw.Close(); err != nil {
+  err = paelito_shared.ZipSource(tmpFolder, outFilePath)
+  if err != nil {
     panic(err)
   }
 
