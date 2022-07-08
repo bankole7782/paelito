@@ -27,25 +27,25 @@ func StartBackend() {
 
 	os.MkdirAll(filepath.Join(rootPath, "lib"), 0777)
 	os.MkdirAll(filepath.Join(rootPath, "p"), 0777)
-	//
-	// includedBooks := []map[string]string {
-	// 	{
-	// 		"book_url": "http://sae.ng/static/books/the_botanum.pae1",
-	// 		"book_file_name": "the_botanum.pae1",
-	// 	},
-	// 	{
-	// 		"book_url": "http://sae.ng/static/books/the_baileia.pae1",
-	// 		"book_file_name": "the_baileia.pae1",
-	// 	},
-	// }
-	//
-	// for _, m := range includedBooks {
-	// 	err := downloadFile(m["book_url"], filepath.Join(rootPath, "lib", m["book_file_name"]))
-	// 	if err != nil {
-	// 		fmt.Printf("%+v\n", err)
-	// 		panic(err)
-	// 	}
-	// }
+
+	includedBooks := []map[string]string {
+		{
+			"book_url": "http://sae.ng/static/books/the_botanum.zip",
+			"book_file_name": "the_botanum.zip",
+		},
+		{
+			"book_url": "http://sae.ng/static/books/the_baileia.zip",
+			"book_file_name": "the_baileia.zip",
+		},
+	}
+
+	for _, m := range includedBooks {
+		err := downloadFile(m["book_url"], filepath.Join(rootPath, "lib", m["book_file_name"]))
+		if err != nil {
+			fmt.Printf("%+v\n", err)
+			panic(err)
+		}
+	}
 
 
 	port := "45362"
